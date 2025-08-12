@@ -81,6 +81,7 @@ const SurveyForm: React.FC = () => {
 
   const loadQuestions = async () => {
     try {
+      setLoading(true);
       const surveyRole = ['lecturer', 'it_support', 'admin', 'principal', 'student'].includes(formData.role) ? 'ihl' : 'isp';
       const response = await surveyAPI.getQuestions(surveyRole);
       setQuestions(response.data);
@@ -91,8 +92,13 @@ const SurveyForm: React.FC = () => {
         initialAnswers[q.id] = 3;
       });
       setFormData(prev => ({ ...prev, answers: initialAnswers }));
+      
+      console.log(`Loaded ${response.data.length} questions for role: ${surveyRole}`);
     } catch (error) {
       console.error('Error loading questions:', error);
+      alert('Error loading questions. Please refresh the page and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -335,12 +341,41 @@ const SurveyForm: React.FC = () => {
     const dimension = DIMENSIONS[currentStep - 1];
     const dimensionQuestions = getCurrentDimensionQuestions();
 
+    if (loading) {
+      return (
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading questions...</p>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (dimensionQuestions.length === 0) {
+      return (
+        <Card>
+          <CardHeader>
+            <h2 className="text-xl font-semibold text-gray-900">{dimension.label}</h2>
+          </CardHeader>
+          <CardContent className="text-center py-8">
+            <p className="text-gray-600 mb-4">No questions available for this dimension.</p>
+            <p className="text-sm text-gray-500">
+              Please ensure you have selected a role and that questions are loaded in the database.
+            </p>
+          </CardContent>
+        </Card>
+      );
+    }
     return (
       <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold text-gray-900">{dimension.label}</h2>
           <p className="text-sm text-gray-600">
-            Please rate your agreement with the following statements on a scale of 1 to 5.
+            Please rate your agreement with the following statements on a scale of 1 to 5. 
+            ({dimensionQuestions.length} questions)
           </p>
         </CardHeader>
         <CardContent className="space-y-8">
