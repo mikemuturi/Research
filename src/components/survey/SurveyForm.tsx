@@ -173,7 +173,7 @@ const SurveyForm: React.FC = () => {
       };
 
       const response = await surveyAPI.submitSurvey(submissionData);
-      router.push(`/results/${response.data.id}`);
+      navigate(`/results/${response.data.id}`);
     } catch (error: any) {
       console.error('Error submitting survey:', error);
       alert('Error submitting survey. Please try again.');
