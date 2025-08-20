@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
@@ -21,8 +21,8 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password) {
-      setError('Email and password are required');
+    if (!formData.username || !formData.password) {
+      setError('Username and password are required');
       return;
     }
 
@@ -30,10 +30,13 @@ const LoginPage: React.FC = () => {
     
     // Simulate authentication
     setTimeout(() => {
-      // Mock successful login
-      localStorage.setItem('access_token', 'mock-user-token');
-      localStorage.setItem('refresh_token', 'mock-refresh-token');
-      navigate('/');
+      if (formData.username === 'user' && formData.password === 'password') {
+        localStorage.setItem('access_token', 'mock-user-token');
+        localStorage.setItem('refresh_token', 'mock-refresh-token');
+        navigate('/');
+      } else {
+        setError('Invalid username or password. Try user/password');
+      }
       setLoading(false);
     }, 1000);
   };
@@ -58,20 +61,20 @@ const LoginPage: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    id="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => handleInputChange('username', e.target.value)}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                     required
                   />
                 </div>
@@ -162,6 +165,15 @@ const LoginPage: React.FC = () => {
                   Sign up here
                 </Link>
               </p>
+              
+              {/* Demo Credentials */}
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800 font-medium mb-2">Demo Credentials:</p>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <p><strong>Username:</strong> user</p>
+                  <p><strong>Password:</strong> password</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
