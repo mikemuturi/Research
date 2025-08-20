@@ -44,11 +44,11 @@ const ContactPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Information */}
-          <div className="lg:col-span-1 space-y-8">
+          <div className="lg:col-span-3 mb-8">
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
               
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <Mail className="h-6 w-6 text-blue-600" />
@@ -86,7 +86,10 @@ const ContactPage: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
 
+          {/* Office Hours */}
+          <div className="lg:col-span-1">
             {/* Office Hours */}
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <div className="flex items-center mb-6">
@@ -108,7 +111,10 @@ const ContactPage: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
 
+          {/* Quick Stats */}
+          <div className="lg:col-span-1">
             {/* Quick Stats */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
               <h3 className="text-xl font-semibold mb-6">Why Contact Us?</h3>
@@ -134,7 +140,7 @@ const ContactPage: React.FC = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-lg p-8">
               <div className="flex items-center mb-8">
                 <MessageSquare className="h-8 w-8 text-blue-600 mr-3" />
@@ -236,84 +242,6 @@ const ContactPage: React.FC = () => {
                   </button>
                 </form>
               )}
-            </div>
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="mt-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-gray-600">
-              Common questions about the RAFSIA assessment tool
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                How long does the assessment take?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                The RAFSIA assessment typically takes 10-15 minutes to complete, depending on your 
-                role and the depth of your responses. The assessment is designed to be comprehensive 
-                yet efficient.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Is my data secure and private?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Yes, we take data security seriously. All responses are encrypted and stored securely. 
-                You can also choose to submit anonymously, and we comply with all applicable data 
-                protection regulations.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Can I retake the assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Yes, you can retake the assessment at any time to track improvements in your 
-                readiness scores over time. This is particularly useful for monitoring progress 
-                after implementing recommendations.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                How are the results calculated?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Results are calculated based on your responses across five dimensions using a 
-                validated scoring methodology developed through extensive research and field testing 
-                with institutions across Kenya.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Who can use this assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                The assessment is designed for institutions of higher learning (universities, colleges, 
-                technical institutes) and internet service providers looking to evaluate their readiness 
-                for satellite internet adoption.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                What happens after I complete the assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                You'll receive instant results with detailed scores, visualizations, and personalized 
-                recommendations. You can also download a PDF report and share your results with 
-                stakeholders.
-              </p>
             </div>
           </div>
         </div>
