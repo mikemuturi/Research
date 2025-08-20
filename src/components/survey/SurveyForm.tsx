@@ -567,7 +567,7 @@ const SurveyForm: React.FC = () => {
   );
 };
 
-export default SurveyForm;
+var _c;$RefreshReg$(_c, "SurveyForm");
 
 
 export default SurveyForm
