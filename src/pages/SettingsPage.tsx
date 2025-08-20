@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Bell, Shield, Globe, Moon, Sun, Monitor, Save } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const SettingsPage: React.FC = () => {
   const [settings, setSettings] = useState({
@@ -301,6 +302,7 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

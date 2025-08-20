@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shield, Lock, Eye, Users, FileText, Globe, CheckCircle, AlertTriangle } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const PrivacyPage: React.FC = () => {
   return (
@@ -319,6 +320,7 @@ const PrivacyPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

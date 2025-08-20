@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, User, Mail, Phone, MapPin, Camera, Save, Edit } from 'lucide-react';
+import Footer from '../components/Footer';
 
 interface UserProfile {
   id: number;
@@ -344,6 +345,7 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

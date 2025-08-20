@@ -1,4 +1,5 @@
 import React from 'react';
+import Footer from '../components/Footer';
 
 const SurveyPage: React.FC = () => {
   return (
@@ -12,6 +13,7 @@ const SurveyPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -174,6 +175,7 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Target, Users, BarChart3, Globe, Shield, CheckCircle, ArrowRight, BookOpen, Lightbulb, TrendingUp, Award, Zap, Heart } from 'lucide-react';
+import Footer from '../components/Footer';
 
 const AboutPage: React.FC = () => {
   return (
@@ -439,6 +440,7 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };
