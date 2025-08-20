@@ -74,6 +74,36 @@ const AboutPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Mission and Vision */}
+        <section className="bg-white rounded-lg shadow-sm p-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <div className="flex items-center mb-4">
+                <Target className="h-6 w-6 text-blue-600 mr-3" />
+                <h3 className="text-xl font-bold text-gray-900">Our Mission</h3>
+              </div>
+              <p className="text-gray-700 leading-relaxed">
+                To bridge the digital divide by providing institutions and service providers with 
+                comprehensive assessment tools that enable informed decision-making for satellite 
+                internet adoption. We strive to accelerate connectivity in underserved areas through 
+                evidence-based readiness evaluation and actionable recommendations.
+              </p>
+            </div>
+            
+            <div>
+              <div className="flex items-center mb-4">
+                <Lightbulb className="h-6 w-6 text-blue-600 mr-3" />
+                <h3 className="text-xl font-bold text-gray-900">Our Vision</h3>
+              </div>
+              <p className="text-gray-700 leading-relaxed">
+                A world where every institution and community has access to reliable, affordable 
+                internet connectivity. We envision a future where satellite internet technology 
+                serves as a catalyst for educational advancement, economic development, and social 
+                progress in all regions, regardless of geographic constraints.
+              </p>
+            </div>
+          </div>
+        </section>
         {/* Five Dimensions */}
         <section className="bg-white rounded-lg shadow-sm p-8 mb-8">
           <div className="flex items-center mb-6">
