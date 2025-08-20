@@ -28,9 +28,9 @@ function App() {
           <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
           <Route path="/profile" element={<><Navbar /><ProfilePage /></>} />
           <Route path="/settings" element={<><Navbar /><SettingsPage /></>} />
+          <Route path="/privacy" element={<><Navbar /><PrivacyPage /></>} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/privacy" element={<><Navbar /><PrivacyPage /></>} />
         </Routes>
       </div>
     </Router>
