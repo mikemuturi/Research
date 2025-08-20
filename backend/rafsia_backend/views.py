@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 
+from rest_framework import serializers
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User

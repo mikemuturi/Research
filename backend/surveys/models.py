@@ -98,6 +98,13 @@ class Submission(models.Model):
     overall_score = models.FloatField(default=0)
     readiness_level = models.CharField(max_length=15, choices=READINESS_LEVELS, blank=True)
     
+    # Comments for each dimension
+    technical_comments = models.TextField(blank=True)
+    economic_comments = models.TextField(blank=True)
+    socio_cultural_comments = models.TextField(blank=True)
+    environmental_comments = models.TextField(blank=True)
+    policy_regulatory_comments = models.TextField(blank=True)
+    
     def calculate_scores(self):
         """Calculate dimension and overall scores"""
         dimensions = ['technical', 'economic', 'socio_cultural', 'environmental', 'policy_regulatory']

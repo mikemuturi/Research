@@ -70,6 +70,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     institution_name_display = serializers.SerializerMethodField()
     recommendations = serializers.SerializerMethodField()
     scores_by_dimension = serializers.SerializerMethodField()
+    comments_by_dimension = serializers.SerializerMethodField()
     
     class Meta:
         model = Submission
@@ -78,7 +79,8 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             'institution_name_display', 'county', 'consent_given', 'is_anonymous',
             'submitted_at', 'technical_score', 'economic_score', 'socio_cultural_score',
             'environmental_score', 'policy_regulatory_score', 'overall_score',
-            'readiness_level', 'answers', 'recommendations', 'scores_by_dimension'
+            'readiness_level', 'answers', 'recommendations', 'scores_by_dimension',
+            'comments_by_dimension'
         ]
     
     def get_institution_name_display(self, obj):
@@ -96,6 +98,15 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             'socio_cultural': obj.socio_cultural_score,
             'environmental': obj.environmental_score,
             'policy_regulatory': obj.policy_regulatory_score,
+        }
+    
+    def get_comments_by_dimension(self, obj):
+        return {
+            'technical': obj.technical_comments,
+            'economic': obj.economic_comments,
+            'socio_cultural': obj.socio_cultural_comments,
+            'environmental': obj.environmental_comments,
+            'policy_regulatory': obj.policy_regulatory_comments,
         }
 
 class SubmissionListSerializer(serializers.ModelSerializer):
