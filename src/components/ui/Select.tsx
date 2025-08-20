@@ -47,4 +47,4 @@ export default Select;
 
 var _c;$RefreshReg$(_c, "Select");
 
-export default Select
+var _c2;$RefreshReg$(_c2, "Select");
