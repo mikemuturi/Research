@@ -28,20 +28,29 @@ const LoginPage: React.FC = () => {
 
     setLoading(true);
     
-    // Simulate authentication
-    setTimeout(() => {
-      // Accept either username or email
-      const isValidUser = (formData.usernameOrEmail === 'user' || formData.usernameOrEmail === 'user@example.com') && formData.password === 'password';
-      
-      if (isValidUser) {
-        localStorage.setItem('access_token', 'mock-user-token');
-        localStorage.setItem('refresh_token', 'mock-refresh-token');
-        navigate('/');
-      } else {
-        setError('Invalid credentials. Try user/password or user@example.com/password');
+    try {
+      // Check admin credentials first
+      if (formData.usernameOrEmail === 'admin' && formData.password === 'admin123') {
+        localStorage.setItem('access_token', 'mock-admin-access-token');
+        localStorage.setItem('refresh_token', 'mock-admin-refresh-token');
+        localStorage.setItem('user_role', 'admin');
+        navigate('/admin');
       }
+      // Check regular user credentials
+      else if ((formData.usernameOrEmail === 'user' || formData.usernameOrEmail === 'user@example.com') && formData.password === 'password') {
+        localStorage.setItem('access_token', 'mock-user-token');
+        localStorage.setItem('refresh_token', 'mock-user-refresh-token');
+        localStorage.setItem('user_role', 'user');
+        navigate('/dashboard');
+      }
+      else {
+        setError('Invalid credentials. Try admin/admin123 for admin or user/password for regular user');
+      }
+    } catch (error) {
+      setError('Login failed. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
