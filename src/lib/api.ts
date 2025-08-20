@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SURVEY_QUESTIONS } from './questions';
 
 const API_BASE_URL = '/api';
 
