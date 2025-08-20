@@ -45,4 +45,6 @@ const Select: React.FC<SelectProps> = ({
 export default Select;
 
 
+var _c;$RefreshReg$(_c, "Select");
+
 export default Select
