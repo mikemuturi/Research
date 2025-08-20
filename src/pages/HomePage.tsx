@@ -1,6 +1,41 @@
 import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BarChart3, Shield, Globe, Users, CheckCircle, Target, Zap } from 'lucide-react';
+import { ArrowRight, BarChart3, Shield, Globe, Users, CheckCircle, Target, Zap, Plus, Minus } from 'lucide-react';
+
+// FAQ Item Component
+const FAQItem: React.FC<{ question: string; answer: string }> = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors duration-200"
+      >
+        <h3 className="text-lg font-semibold text-gray-900 pr-4">
+          {question}
+        </h3>
+        <div className="flex-shrink-0">
+          {isOpen ? (
+            <Minus className="h-5 w-5 text-blue-600" />
+          ) : (
+            <Plus className="h-5 w-5 text-blue-600" />
+          )}
+        </div>
+      </button>
+      {isOpen && (
+        <div className="px-6 pb-6">
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-gray-600 leading-relaxed">
+              {answer}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const HomePage: React.FC = () => {
   return (
@@ -211,71 +246,36 @@ const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                How long does the assessment take?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                The RAFSIA assessment typically takes 10-15 minutes to complete, depending on your 
-                role and the depth of your responses. The assessment is designed to be comprehensive 
-                yet efficient.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Is my data secure and private?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Yes, we take data security seriously. All responses are encrypted and stored securely. 
-                You can also choose to submit anonymously, and we comply with all applicable data 
-                protection regulations.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Can I retake the assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Yes, you can retake the assessment at any time to track improvements in your 
-                readiness scores over time. This is particularly useful for monitoring progress 
-                after implementing recommendations.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                How are the results calculated?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Results are calculated based on your responses across five dimensions using a 
-                validated scoring methodology developed through extensive research and field testing 
-                with institutions across Kenya.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Who can use this assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                The assessment is designed for institutions of higher learning (universities, colleges, 
-                technical institutes) and internet service providers looking to evaluate their readiness 
-                for satellite internet adoption.
-              </p>
-            </div>
-
-            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                What happens after I complete the assessment?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                You'll receive instant results with detailed scores, visualizations, and personalized 
-                recommendations. You can also download a PDF report and share your results with 
-                stakeholders.
-              </p>
+          <div className="max-w-4xl mx-auto">
+            <div className="space-y-4">
+              {[
+                {
+                  question: "How long does the assessment take?",
+                  answer: "The RAFSIA assessment typically takes 10-15 minutes to complete, depending on your role and the depth of your responses. The assessment is designed to be comprehensive yet efficient."
+                },
+                {
+                  question: "Is my data secure and private?",
+                  answer: "Yes, we take data security seriously. All responses are encrypted and stored securely. You can also choose to submit anonymously, and we comply with all applicable data protection regulations."
+                },
+                {
+                  question: "Can I retake the assessment?",
+                  answer: "Yes, you can retake the assessment at any time to track improvements in your readiness scores over time. This is particularly useful for monitoring progress after implementing recommendations."
+                },
+                {
+                  question: "How are the results calculated?",
+                  answer: "Results are calculated based on your responses across five dimensions using a validated scoring methodology developed through extensive research and field testing with institutions across Kenya."
+                },
+                {
+                  question: "Who can use this assessment?",
+                  answer: "The assessment is designed for institutions of higher learning (universities, colleges, technical institutes) and internet service providers looking to evaluate their readiness for satellite internet adoption."
+                },
+                {
+                  question: "What happens after I complete the assessment?",
+                  answer: "You'll receive instant results with detailed scores, visualizations, and personalized recommendations. You can also download a PDF report and share your results with stakeholders."
+                }
+              ].map((faq, index) => (
+                <FAQItem key={index} question={faq.question} answer={faq.answer} />
+              ))}
             </div>
           </div>
         </div>
