@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, Phone, MapPin, Send, MessageSquare } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe, Users, Award, Target } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -29,36 +28,29 @@ const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <Link 
-            to="/" 
-            className="inline-flex items-center text-blue-600 hover:text-blue-500 mb-4 transition-colors"
-          >
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Home
-          </Link>
-          
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Get in touch with our research team for questions about the RAFSIA assessment tool, 
-              research collaboration, or technical support.
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">Get in Touch</h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            Have questions about the RAFSIA assessment tool? We're here to help you understand 
+            satellite internet readiness and support your connectivity journey.
+          </p>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+          <div className="lg:col-span-1 space-y-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <Mail className="h-6 w-6 text-blue-600 mt-1" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Mail className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Email</h3>
@@ -68,8 +60,8 @@ const ContactPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <Phone className="h-6 w-6 text-blue-600 mt-1" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Phone className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
@@ -79,8 +71,8 @@ const ContactPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <MapPin className="h-6 w-6 text-blue-600 mt-1" />
+                  <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <MapPin className="h-6 w-6 text-purple-600" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Address</h3>
@@ -95,129 +87,160 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Office Hours */}
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Office Hours</h3>
-              <div className="space-y-2 text-gray-600">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <div className="flex items-center mb-6">
+                <Clock className="h-6 w-6 text-blue-600 mr-3" />
+                <h3 className="text-xl font-semibold text-gray-900">Office Hours</h3>
+              </div>
+              <div className="space-y-3 text-gray-600">
                 <div className="flex justify-between">
                   <span>Monday - Friday</span>
-                  <span>8:00 AM - 5:00 PM</span>
+                  <span className="font-medium">8:00 AM - 5:00 PM</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Saturday</span>
-                  <span>9:00 AM - 1:00 PM</span>
+                  <span className="font-medium">9:00 AM - 1:00 PM</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Sunday</span>
-                  <span>Closed</span>
+                  <span className="font-medium text-red-600">Closed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl shadow-lg p-8 text-white">
+              <h3 className="text-xl font-semibold mb-6">Why Contact Us?</h3>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <Users className="h-5 w-5 mr-3" />
+                  <span>Expert research team</span>
+                </div>
+                <div className="flex items-center">
+                  <Award className="h-5 w-5 mr-3" />
+                  <span>Proven methodology</span>
+                </div>
+                <div className="flex items-center">
+                  <Target className="h-5 w-5 mr-3" />
+                  <span>Tailored solutions</span>
+                </div>
+                <div className="flex items-center">
+                  <Globe className="h-5 w-5 mr-3" />
+                  <span>Global best practices</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center mb-6">
-              <MessageSquare className="h-6 w-6 text-blue-600 mr-3" />
-              <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
-            </div>
-
-            {submitted ? (
-              <div className="text-center py-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                  <Send className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Message Sent!</h3>
-                <p className="text-gray-600 mb-4">
-                  Thank you for contacting us. We'll get back to you within 24 hours.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                >
-                  Send Another Message
-                </button>
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <div className="flex items-center mb-8">
+                <MessageSquare className="h-8 w-8 text-blue-600 mr-3" />
+                <h2 className="text-3xl font-bold text-gray-900">Send us a Message</h2>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {submitted ? (
+                <div className="text-center py-12">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+                    <Send className="h-10 w-10 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-4">Message Sent Successfully!</h3>
+                  <p className="text-gray-600 mb-6 text-lg">
+                    Thank you for contacting us. We'll get back to you within 24 hours.
+                  </p>
+                  <button
+                    onClick={() => setSubmitted(false)}
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  >
+                    Send Another Message
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                        placeholder="Enter your email address"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Full Name *
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Subject *
                     </label>
                     <input
                       type="text"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={formData.subject}
+                      onChange={(e) => handleInputChange('subject', e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      placeholder="What is this regarding?"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address *
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Message *
                     </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    <textarea
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value)}
+                      rows={6}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                      placeholder="Please describe your inquiry in detail..."
                       required
                     />
                   </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.subject}
-                    onChange={(e) => handleInputChange('subject', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Message *
-                  </label>
-                  <textarea
-                    value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
-                    rows={6}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Please describe your inquiry in detail..."
-                    required
-                  />
-                </div>
-                
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Sending...
-                    </div>
-                  ) : (
-                    <>
-                      <Send size={16} className="mr-2" />
-                      Send Message
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
+                  
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-lg"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                        Sending Message...
+                      </div>
+                    ) : (
+                      <>
+                        <Send size={20} className="mr-3" />
+                        Send Message
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-16">
+        <div className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
             <p className="text-lg text-gray-600">
@@ -226,43 +249,69 @@ const ContactPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 How long does the assessment take?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-relaxed">
                 The RAFSIA assessment typically takes 10-15 minutes to complete, depending on your 
-                role and the depth of your responses.
+                role and the depth of your responses. The assessment is designed to be comprehensive 
+                yet efficient.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Is my data secure and private?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-relaxed">
                 Yes, we take data security seriously. All responses are encrypted and stored securely. 
-                You can also choose to submit anonymously.
+                You can also choose to submit anonymously, and we comply with all applicable data 
+                protection regulations.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Can I retake the assessment?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-relaxed">
                 Yes, you can retake the assessment at any time to track improvements in your 
-                readiness scores over time.
+                readiness scores over time. This is particularly useful for monitoring progress 
+                after implementing recommendations.
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 How are the results calculated?
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 leading-relaxed">
                 Results are calculated based on your responses across five dimensions using a 
-                validated scoring methodology developed through extensive research.
+                validated scoring methodology developed through extensive research and field testing 
+                with institutions across Kenya.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Who can use this assessment?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                The assessment is designed for institutions of higher learning (universities, colleges, 
+                technical institutes) and internet service providers looking to evaluate their readiness 
+                for satellite internet adoption.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                What happens after I complete the assessment?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                You'll receive instant results with detailed scores, visualizations, and personalized 
+                recommendations. You can also download a PDF report and share your results with 
+                stakeholders.
               </p>
             </div>
           </div>
