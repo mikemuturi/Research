@@ -50,8 +50,61 @@ export default api;
 
 // Auth API
 export const authAPI = {
-  login: (usernameOrEmail: string, password: string) =>
-    api.post('/auth/token/', { username_or_email: usernameOrEmail, password }),
+  login: (usernameOrEmail: string, password: string) => {
+    // Mock authentication since backend is not running
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Check admin credentials
+        if ((usernameOrEmail === 'admin' && password === 'admin123') ||
+            (usernameOrEmail === 'admin@rafsia.org' && password === 'admin123')) {
+          resolve({
+            data: {
+              access: 'mock-admin-access-token',
+              refresh: 'mock-admin-refresh-token',
+              user: {
+                id: 1,
+                username: 'admin',
+                email: 'admin@rafsia.org',
+                first_name: 'Admin',
+                last_name: 'User',
+                is_staff: true,
+                is_superuser: true,
+                role: 'admin'
+              }
+            }
+          });
+        }
+        // Check user credentials
+        else if ((usernameOrEmail === 'user' && password === 'password') ||
+                 (usernameOrEmail === 'user@example.com' && password === 'password')) {
+          resolve({
+            data: {
+              access: 'mock-user-access-token',
+              refresh: 'mock-user-refresh-token',
+              user: {
+                id: 2,
+                username: 'user',
+                email: 'user@example.com',
+                first_name: 'John',
+                last_name: 'Doe',
+                is_staff: false,
+                is_superuser: false,
+                role: 'user'
+              }
+            }
+          });
+        }
+        else {
+          reject({
+            response: {
+              status: 400,
+              data: { detail: 'Invalid credentials' }
+            }
+          });
+        }
+      }, 500); // Simulate network delay
+    });
+  },
   
   refresh: (refresh_token: string) =>
     api.post('/auth/token/refresh/', { refresh: refresh_token }),
