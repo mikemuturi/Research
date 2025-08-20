@@ -112,22 +112,134 @@ export const authAPI = {
 
 // Survey API
 export const surveyAPI = {
-  getQuestions: (role?: string, dimension?: string) =>
-    api.get('/surveys/questions/', { params: { role, dimension } }),
+  getQuestions: (role?: string, dimension?: string) => {
+    // Mock questions data
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const mockQuestions = [
+          {
+            id: 1,
+            text: 'Our institution has adequate ICT infrastructure to support satellite internet connectivity',
+            dimension: 'technical',
+            role: 'ihl',
+            order: 1,
+            is_active: true
+          },
+          {
+            id: 2,
+            text: 'We have reliable power supply to support continuous internet connectivity',
+            dimension: 'technical',
+            role: 'both',
+            order: 2,
+            is_active: true
+          },
+          // Add more mock questions as needed
+        ];
+        resolve({ data: mockQuestions });
+      }, 300);
+    });
+  },
   
-  submitSurvey: (data: any) =>
-    api.post('/surveys/submissions/', data),
+  submitSurvey: (data: any) => {
+    // Mock survey submission
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            id: Math.floor(Math.random() * 1000),
+            ...data,
+            submitted_at: new Date().toISOString(),
+            overall_score: Math.floor(Math.random() * 40) + 60, // Random score 60-100
+            readiness_level: 'not_sure'
+          }
+        });
+      }, 1000);
+    });
+  },
   
-  getSubmission: (id: string, isPublic?: boolean) =>
-    api.get(`/surveys/submissions/${id}/`, { 
-      params: isPublic ? { public: 'true' } : {} 
-    }),
+  getSubmission: (id: string, isPublic?: boolean) => {
+    // Mock submission data
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            id: parseInt(id),
+            name: 'John Doe',
+            email: 'john@example.com',
+            role: 'lecturer',
+            institution_name_display: 'Masinde Muliro University',
+            county: 'Kakamega',
+            submitted_at: new Date().toISOString(),
+            technical_score: 75,
+            economic_score: 68,
+            socio_cultural_score: 82,
+            environmental_score: 71,
+            policy_regulatory_score: 79,
+            overall_score: 75,
+            readiness_level: 'not_sure',
+            recommendations: [
+              'Upgrade ICT infrastructure and equipment',
+              'Develop sustainable funding models',
+              'Conduct awareness campaigns on digital literacy'
+            ],
+            scores_by_dimension: {
+              technical: 75,
+              economic: 68,
+              socio_cultural: 82,
+              environmental: 71,
+              policy_regulatory: 79,
+            }
+          }
+        });
+      }, 300);
+    });
+  },
   
-  getSubmissions: (filters?: any) =>
-    api.get('/surveys/submissions/', { params: filters }),
+  getSubmissions: (filters?: any) => {
+    // Mock submissions data
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: [
+            {
+              id: 1,
+              name: 'John Doe',
+              role: 'lecturer',
+              institution_name_display: 'Masinde Muliro University',
+              county: 'Kakamega',
+              submitted_at: '2025-01-15T10:30:00Z',
+              overall_score: 75,
+              readiness_level: 'not_sure'
+            }
+          ]
+        });
+      }, 300);
+    });
+  },
   
-  getStatistics: () =>
-    api.get('/surveys/submissions/statistics/'),
+  getStatistics: () => {
+    // Mock statistics data
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            total_submissions: 45,
+            by_role: { lecturer: 20, student: 15, admin: 10 },
+            by_county: { Kakamega: 25, Bungoma: 20 },
+            by_readiness_level: { very_ready: 15, not_sure: 20, not_ready: 10 },
+            average_scores: {
+              technical: 72,
+              economic: 65,
+              socio_cultural: 78,
+              environmental: 70,
+              policy_regulatory: 75,
+              overall: 72
+            }
+          }
+        });
+      }, 300);
+    });
+  },
   
   exportCSV: (filters?: any) =>
     api.get('/surveys/submissions/export_csv/', { params: filters }),
