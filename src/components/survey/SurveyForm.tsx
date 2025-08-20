@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Check, User, Building, MapPin, Mail, Phone } from 'lucide-react';
 import { surveyAPI } from '@/lib/api';
 import { SURVEY_QUESTIONS, DIMENSION_INFO, LIKERT_SCALE } from '@/lib/questions';
@@ -30,7 +30,7 @@ const ROLE_OPTIONS = [
 ];
 
 const SurveyForm: React.FC = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [institutions, setInstitutions] = useState<Institution[]>([]);
