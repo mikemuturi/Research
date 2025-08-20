@@ -27,18 +27,22 @@ const AdminLoginPage: React.FC = () => {
 
     setLoading(true);
     
-    // Simulate authentication
-    setTimeout(() => {
+    try {
+      // Check admin credentials
       if (formData.username === 'admin' && formData.password === 'admin123') {
-        // Mock JWT tokens
-        localStorage.setItem('access_token', 'mock-access-token');
-        localStorage.setItem('refresh_token', 'mock-refresh-token');
+        // Mock JWT tokens for admin
+        localStorage.setItem('access_token', 'mock-admin-access-token');
+        localStorage.setItem('refresh_token', 'mock-admin-refresh-token');
+        localStorage.setItem('user_role', 'admin');
         navigate('/admin');
       } else {
-        setError('Invalid username or password. Try admin/admin123');
+        setError('Invalid admin credentials. Use admin/admin123');
       }
+    } catch (error) {
+      setError('Login failed. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
