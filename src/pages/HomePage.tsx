@@ -201,6 +201,86 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Common questions about the RAFSIA assessment tool and satellite internet readiness
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                How long does the assessment take?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                The RAFSIA assessment typically takes 10-15 minutes to complete, depending on your 
+                role and the depth of your responses. The assessment is designed to be comprehensive 
+                yet efficient.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Is my data secure and private?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Yes, we take data security seriously. All responses are encrypted and stored securely. 
+                You can also choose to submit anonymously, and we comply with all applicable data 
+                protection regulations.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Can I retake the assessment?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Yes, you can retake the assessment at any time to track improvements in your 
+                readiness scores over time. This is particularly useful for monitoring progress 
+                after implementing recommendations.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                How are the results calculated?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Results are calculated based on your responses across five dimensions using a 
+                validated scoring methodology developed through extensive research and field testing 
+                with institutions across Kenya.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Who can use this assessment?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                The assessment is designed for institutions of higher learning (universities, colleges, 
+                technical institutes) and internet service providers looking to evaluate their readiness 
+                for satellite internet adoption.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-200 rounded-xl p-8 hover:shadow-lg transition-shadow">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                What happens after I complete the assessment?
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                You'll receive instant results with detailed scores, visualizations, and personalized 
+                recommendations. You can also download a PDF report and share your results with 
+                stakeholders.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
