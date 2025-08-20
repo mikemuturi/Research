@@ -1,18 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AdminLayout from '../components/admin/AdminLayout';
+import SubmissionsTab from '../components/admin/SubmissionsTab';
+import SurveysTab from '../components/admin/SurveysTab';
+import QuestionsTab from '../components/admin/QuestionsTab';
+import AnswersTab from '../components/admin/AnswersTab';
+import ProjectsTab from '../components/admin/ProjectsTab';
+import UsersTab from '../components/admin/UsersTab';
 
 const AdminDashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('submissions');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
+  }, [navigate]);
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'submissions':
+        return <SubmissionsTab />;
+      case 'surveys':
+        return <SurveysTab />;
+      case 'questions':
+        return <QuestionsTab />;
+      case 'answers':
+        return <AnswersTab />;
+      case 'projects':
+        return <ProjectsTab />;
+      case 'users':
+        return <UsersTab />;
+      default:
+        return <SubmissionsTab />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage RAFSIA assessments and data</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-8">
-          <p className="text-gray-500 text-center">Admin dashboard coming soon...</p>
-        </div>
-      </div>
-    </div>
+    <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      {renderTabContent()}
+    </AdminLayout>
   );
 };
 
