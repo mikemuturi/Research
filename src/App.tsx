@@ -12,6 +12,7 @@ import SettingsPage from './pages/SettingsPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivacyPage from './pages/PrivacyPage';
+import UserDashboard from './pages/UserDashboard';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/privacy" element={<><Navbar /><PrivacyPage /></>} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<><Navbar /><UserDashboard /></>} />
         </Routes>
       </div>
     </Router>
