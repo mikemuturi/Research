@@ -1,10 +1,30 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import SurveyPage from './pages/SurveyPage';
+import ResultsPage from './pages/ResultsPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminDashboard from './pages/AdminDashboard';
+import PrivacyPage from './pages/PrivacyPage';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <p>Start prompting (or editing) to see magic happen :)</p>
-    </div>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/results/:id" element={<ResultsPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
