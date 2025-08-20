@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
-import SurveyPage from './pages/SurveyPage';
+import SurveyForm from './components/survey/SurveyForm';
 import ResultsPage from './pages/ResultsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -23,7 +23,7 @@ function App() {
           <Route path="/" element={<><Navbar /><HomePage /></>} />
           <Route path="/about" element={<><Navbar /><AboutPage /></>} />
           <Route path="/contact" element={<><Navbar /><ContactPage /></>} />
-          <Route path="/survey" element={<><Navbar /><SurveyPage /></>} />
+          <Route path="/survey" element={<SurveyForm />} />
           <Route path="/results/:id" element={<><Navbar /><ResultsPage /></>} />
           <Route path="/login" element={<><Navbar /><LoginPage /></>} />
           <Route path="/register" element={<><Navbar /><RegisterPage /></>} />
