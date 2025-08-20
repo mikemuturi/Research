@@ -4,21 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions
-from rest_framework.serializers import ModelSerializer
-
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 
-                 'is_active', 'is_staff', 'is_superuser', 'date_joined', 'last_login']
-        read_only_fields = ['date_joined', 'last_login']
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+from .views import UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
