@@ -10,21 +10,22 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from io import BytesIO
 
-from .models import Project, Institution, Question, Submission
+from .models import Project, Institution, Question, Submission, Answer
 from .serializers import (
     ProjectSerializer, InstitutionSerializer, QuestionSerializer,
-    SubmissionCreateSerializer, SubmissionDetailSerializer, SubmissionListSerializer
+    SubmissionCreateSerializer, SubmissionDetailSerializer, SubmissionListSerializer,
+    AnswerSerializer
 )
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class InstitutionViewSet(viewsets.ModelViewSet):
     queryset = Institution.objects.all()
     serializer_class = InstitutionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Question.objects.filter(is_active=True)
@@ -35,6 +36,7 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = super().get_queryset()
         role = self.request.query_params.get('role')
         dimension = self.request.query_params.get('dimension')
+        search = self.request.query_params.get('search')
         
         if role:
             queryset = queryset.filter(Q(role=role) | Q(role='both'))
@@ -42,8 +44,64 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
         if dimension:
             queryset = queryset.filter(dimension=dimension)
         
+        if search:
+            queryset = queryset.filter(text__icontains=search)
+        
         return queryset
 
+class QuestionManagementViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        role = self.request.query_params.get('role')
+        dimension = self.request.query_params.get('dimension')
+        search = self.request.query_params.get('search')
+        is_active = self.request.query_params.get('is_active')
+        
+        if role:
+            queryset = queryset.filter(Q(role=role) | Q(role='both'))
+        
+        if dimension:
+            queryset = queryset.filter(dimension=dimension)
+        
+        if search:
+            queryset = queryset.filter(text__icontains=search)
+        
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active.lower() == 'true')
+        
+class AnswerViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        dimension = self.request.query_params.get('dimension')
+        value = self.request.query_params.get('value')
+        submission_id = self.request.query_params.get('submission_id')
+        search = self.request.query_params.get('search')
+        
+        if dimension:
+            queryset = queryset.filter(question__dimension=dimension)
+        
+        if value:
+            queryset = queryset.filter(value=value)
+        
+        if submission_id:
+            queryset = queryset.filter(submission_id=submission_id)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(question__text__icontains=search) |
+                Q(submission__name__icontains=search)
+            )
+        
+        return queryset.select_related('question', 'submission').order_by('-submission__submitted_at')
+        return queryset.order_by('dimension', 'order')
 class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.all()
     
@@ -74,6 +132,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         project = self.request.query_params.get('project')
         date_from = self.request.query_params.get('date_from')
         date_to = self.request.query_params.get('date_to')
+        search = self.request.query_params.get('search')
+        readiness_level = self.request.query_params.get('readiness_level')
         
         if role:
             queryset = queryset.filter(role=role)
@@ -95,6 +155,17 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         
         if date_to:
             queryset = queryset.filter(submitted_at__lte=date_to)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(email__icontains=search) |
+                Q(county__icontains=search) |
+                Q(institution_name__icontains=search)
+            )
+        
+        if readiness_level:
+            queryset = queryset.filter(readiness_level=readiness_level)
         
         return queryset.order_by('-submitted_at')
     

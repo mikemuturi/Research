@@ -2,9 +2,14 @@ from rest_framework import serializers
 from .models import Project, Institution, Question, Submission, Answer
 
 class ProjectSerializer(serializers.ModelSerializer):
+    submissions_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Project
         fields = '__all__'
+    
+    def get_submissions_count(self, obj):
+        return obj.submission_set.count()
 
 class InstitutionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,10 +24,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
     question_text = serializers.CharField(source='question.text', read_only=True)
     dimension = serializers.CharField(source='question.dimension', read_only=True)
+    respondent_name = serializers.CharField(source='submission.name', read_only=True)
+    submitted_at = serializers.DateTimeField(source='submission.submitted_at', read_only=True)
     
     class Meta:
         model = Answer
-        fields = ['question', 'question_text', 'dimension', 'value']
+        fields = ['id', 'submission', 'question', 'question_text', 'dimension', 'value', 'respondent_name', 'submitted_at']
 
 class SubmissionCreateSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True, write_only=True)

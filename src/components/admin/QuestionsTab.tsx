@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
-
-interface Question {
-  id: number;
-  text: string;
-  dimension: string;
-  role: string;
-  order: number;
-  is_active: boolean;
-}
+import { surveyAPI } from '@/lib/api';
+import { Question } from '@/types';
 
 const QuestionsTab: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,37 +44,29 @@ const QuestionsTab: React.FC = () => {
 
   const loadQuestions = async () => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockData: Question[] = [
-        {
-          id: 1,
-          text: 'Our institution has adequate ICT infrastructure to support satellite internet connectivity',
-          dimension: 'technical',
-          role: 'ihl',
-          order: 1,
-          is_active: true
-        },
-        {
-          id: 2,
-          text: 'We have reliable power supply to support continuous internet connectivity',
-          dimension: 'technical',
-          role: 'both',
-          order: 2,
-          is_active: true
-        },
-        {
-          id: 3,
-          text: 'Our institution can afford the costs associated with satellite internet connectivity',
-          dimension: 'economic',
-          role: 'ihl',
-          order: 1,
-          is_active: true
+    setError('');
+    
+    try {
+      const params = {
+        ...filters,
+        search: searchTerm || undefined,
+      };
+      
+      // Remove empty filters
+      Object.keys(params).forEach(key => {
+        if (!params[key as keyof typeof params]) {
+          delete params[key as keyof typeof params];
         }
-      ];
-      setQuestions(mockData);
+      });
+      
+      const response = await surveyAPI.getQuestions(params.role, params.dimension);
+      setQuestions(response.data);
+    } catch (error: any) {
+      console.error('Error loading questions:', error);
+      setError('Failed to load questions. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleCreate = () => {
@@ -107,29 +93,33 @@ const QuestionsTab: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingQuestion) {
-      setQuestions(prev => prev.map(q => 
-        q.id === editingQuestion.id 
-          ? { ...q, ...formData }
-          : q
-      ));
-    } else {
-      const newQuestion: Question = {
-        id: Date.now(),
-        ...formData
-      };
-      setQuestions(prev => [...prev, newQuestion]);
+    try {
+      if (editingQuestion) {
+        await surveyAPI.updateQuestion(editingQuestion.id.toString(), formData);
+      } else {
+        await surveyAPI.createQuestion(formData);
+      }
+      
+      setShowModal(false);
+      loadQuestions(); // Reload questions
+    } catch (error: any) {
+      console.error('Error saving question:', error);
+      alert('Error saving question. Please try again.');
     }
-    
-    setShowModal(false);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this question?')) {
-      setQuestions(prev => prev.filter(q => q.id !== id));
+      try {
+        await surveyAPI.deleteQuestion(id.toString());
+        loadQuestions(); // Reload questions
+      } catch (error: any) {
+        console.error('Error deleting question:', error);
+        alert('Error deleting question. Please try again.');
+      }
     }
   };
 
@@ -221,6 +211,16 @@ const QuestionsTab: React.FC = () => {
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading questions...</p>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <p className="text-red-600">{error}</p>
+            <button 
+              onClick={loadQuestions}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <div className="divide-y divide-gray-200">

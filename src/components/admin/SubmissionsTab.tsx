@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Filter, Eye, Trash2, Search } from 'lucide-react';
-
-interface Submission {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  institution_name: string;
-  county: string;
-  overall_score: number;
-  readiness_level: string;
-  submitted_at: string;
-}
+import { surveyAPI } from '@/lib/api';
+import { Submission } from '@/types';
 
 const SubmissionsTab: React.FC = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     role: '',
@@ -29,45 +20,44 @@ const SubmissionsTab: React.FC = () => {
 
   const loadSubmissions = async () => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockData: Submission[] = [
-        {
-          id: 1,
-          name: 'John Doe',
-          email: 'john@university.edu',
-          role: 'lecturer',
-          institution_name: 'Masinde Muliro University',
-          county: 'Kakamega',
-          overall_score: 85.5,
-          readiness_level: 'very_ready',
-          submitted_at: '2025-01-15T10:30:00Z'
-        },
-        {
-          id: 2,
-          name: 'Jane Smith',
-          email: 'jane@college.edu',
-          role: 'it_support',
-          institution_name: 'Kakamega Technical College',
-          county: 'Kakamega',
-          overall_score: 72.3,
-          readiness_level: 'not_sure',
-          submitted_at: '2025-01-14T14:20:00Z'
+    setError('');
+    
+    try {
+      const params = {
+        ...filters,
+        search: searchTerm || undefined,
+      };
+      
+      // Remove empty filters
+      Object.keys(params).forEach(key => {
+        if (!params[key as keyof typeof params]) {
+          delete params[key as keyof typeof params];
         }
-      ];
-      setSubmissions(mockData);
+      });
+      
+      const response = await surveyAPI.getSubmissions(params);
+      setSubmissions(response.data);
+    } catch (error: any) {
+      console.error('Error loading submissions:', error);
+      setError('Failed to load submissions. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleExport = () => {
-    // Export functionality
-    console.log('Exporting submissions...');
+    try {
+      surveyAPI.exportCSV(filters);
+    } catch (error) {
+      console.error('Error exporting submissions:', error);
+      alert('Error exporting data. Please try again.');
+    }
   };
 
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this submission?')) {
       setSubmissions(prev => prev.filter(s => s.id !== id));
+      // TODO: Implement actual delete API call
     }
   };
 
@@ -160,6 +150,16 @@ const SubmissionsTab: React.FC = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading submissions...</p>
           </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <p className="text-red-600">{error}</p>
+            <button 
+              onClick={loadSubmissions}
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Retry
+            </button>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -204,13 +204,13 @@ const SubmissionsTab: React.FC = () => {
                       {submission.role.replace('_', ' ')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {submission.institution_name}
+                      {submission.institution_name_display || submission.institution_name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {submission.county}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {submission.overall_score.toFixed(1)}%
+                      {Math.round(submission.overall_score)}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getReadinessColor(submission.readiness_level)}`}>
@@ -237,6 +237,12 @@ const SubmissionsTab: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            
+            {submissions.length === 0 && !loading && !error && (
+              <div className="p-8 text-center text-gray-500">
+                No submissions found matching your criteria.
+              </div>
+            )}
           </div>
         )}
       </div>

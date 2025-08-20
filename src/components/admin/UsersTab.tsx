@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Shield, User, Mail } from 'lucide-react';
+import { adminAPI } from '@/lib/api';
 
 interface User {
   id: number;
@@ -17,6 +18,7 @@ interface User {
 const UsersTab: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,49 +40,21 @@ const UsersTab: React.FC = () => {
 
   const loadUsers = async () => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockData: User[] = [
-        {
-          id: 1,
-          username: 'admin',
-          email: 'admin@rafsia.org',
-          first_name: 'Admin',
-          last_name: 'User',
-          is_active: true,
-          is_staff: true,
-          is_superuser: true,
-          date_joined: '2025-01-01T00:00:00Z',
-          last_login: '2025-01-15T10:30:00Z'
-        },
-        {
-          id: 2,
-          username: 'researcher1',
-          email: 'researcher@university.edu',
-          first_name: 'Jane',
-          last_name: 'Researcher',
-          is_active: true,
-          is_staff: true,
-          is_superuser: false,
-          date_joined: '2025-01-05T00:00:00Z',
-          last_login: '2025-01-14T14:20:00Z'
-        },
-        {
-          id: 3,
-          username: 'analyst1',
-          email: 'analyst@rafsia.org',
-          first_name: 'John',
-          last_name: 'Analyst',
-          is_active: true,
-          is_staff: false,
-          is_superuser: false,
-          date_joined: '2025-01-10T00:00:00Z',
-          last_login: null
-        }
-      ];
-      setUsers(mockData);
+    setError('');
+    
+    try {
+      const params = {
+        search: searchTerm || undefined,
+      };
+      
+      const response = await adminAPI.getUsers(params);
+      setUsers(response.data);
+    } catch (error: any) {
+      console.error('Error loading users:', error);
+      setError('Failed to load users. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleCreate = () => {
@@ -113,31 +87,40 @@ const UsersTab: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingUser) {
-      setUsers(prev => prev.map(u => 
-        u.id === editingUser.id 
-          ? { ...u, ...formData }
-          : u
-      ));
-    } else {
-      const newUser: User = {
-        id: Date.now(),
-        ...formData,
-        date_joined: new Date().toISOString(),
-        last_login: null
-      };
-      setUsers(prev => [newUser, ...prev]);
+    try {
+      const userData = { ...formData };
+      
+      // Remove empty password for updates
+      if (editingUser && !userData.password) {
+        delete userData.password;
+      }
+      
+      if (editingUser) {
+        await adminAPI.updateUser(editingUser.id.toString(), userData);
+      } else {
+        await adminAPI.createUser(userData);
+      }
+      
+      setShowModal(false);
+      loadUsers(); // Reload users
+    } catch (error: any) {
+      console.error('Error saving user:', error);
+      alert('Error saving user. Please try again.');
     }
-    
-    setShowModal(false);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(prev => prev.filter(u => u.id !== id));
+      try {
+        await adminAPI.deleteUser(id.toString());
+        loadUsers(); // Reload users
+      } catch (error: any) {
+        console.error('Error deleting user:', error);
+        alert('Error deleting user. Please try again.');
+      }
     }
   };
 
@@ -190,6 +173,16 @@ const UsersTab: React.FC = () => {
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading users...</p>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={loadUsers}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">

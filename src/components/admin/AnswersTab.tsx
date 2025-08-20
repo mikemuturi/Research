@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Download, Eye } from 'lucide-react';
+import { adminAPI } from '@/lib/api';
 
 interface Answer {
   id: number;
@@ -15,6 +16,7 @@ interface Answer {
 const AnswersTab: React.FC = () => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     dimension: '',
@@ -44,47 +46,39 @@ const AnswersTab: React.FC = () => {
 
   const loadAnswers = async () => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockData: Answer[] = [
-        {
-          id: 1,
-          submission_id: 1,
-          question_id: 1,
-          question_text: 'Our institution has adequate ICT infrastructure to support satellite internet connectivity',
-          dimension: 'technical',
-          value: 4,
-          respondent_name: 'John Doe',
-          submitted_at: '2025-01-15T10:30:00Z'
-        },
-        {
-          id: 2,
-          submission_id: 1,
-          question_id: 2,
-          question_text: 'We have reliable power supply to support continuous internet connectivity',
-          dimension: 'technical',
-          value: 3,
-          respondent_name: 'John Doe',
-          submitted_at: '2025-01-15T10:30:00Z'
-        },
-        {
-          id: 3,
-          submission_id: 2,
-          question_id: 1,
-          question_text: 'Our institution has adequate ICT infrastructure to support satellite internet connectivity',
-          dimension: 'technical',
-          value: 5,
-          respondent_name: 'Jane Smith',
-          submitted_at: '2025-01-14T14:20:00Z'
+    setError('');
+    
+    try {
+      const params = {
+        ...filters,
+        search: searchTerm || undefined,
+      };
+      
+      // Remove empty filters
+      Object.keys(params).forEach(key => {
+        if (!params[key as keyof typeof params]) {
+          delete params[key as keyof typeof params];
         }
-      ];
-      setAnswers(mockData);
+      });
+      
+      const response = await adminAPI.getAnswers(params);
+      setAnswers(response.data);
+    } catch (error: any) {
+      console.error('Error loading answers:', error);
+      setError('Failed to load answers. Please try again.');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   const handleExport = () => {
-    console.log('Exporting answers...');
+    try {
+      // TODO: Implement answer export API
+      console.log('Exporting answers...');
+    } catch (error) {
+      console.error('Error exporting answers:', error);
+      alert('Error exporting data. Please try again.');
+    }
   };
 
   const getDimensionLabel = (dimension: string) => {
@@ -178,6 +172,16 @@ const AnswersTab: React.FC = () => {
           <div className="p-8 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading answers...</p>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button 
+              onClick={loadAnswers}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <div className="overflow-x-auto">
