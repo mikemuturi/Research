@@ -221,6 +221,14 @@ const Navbar: React.FC = () => {
                       </span>
                     </div>
                     <Link
+                      to="/dashboard"
+                      className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <BarChart3 size={16} className="mr-3" />
+                      Dashboard
+                    </Link>
+                    <Link
                       to="/profile"
                       className="flex items-center px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                       onClick={() => setIsMenuOpen(false)}
