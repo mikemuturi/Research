@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Globe, Menu, X, User, LogIn, UserPlus, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { Globe, Menu, X, User, LogIn, UserPlus, LogOut, Settings, ChevronDown, BarChart3 } from 'lucide-react';
 
 interface UserProfile {
   id: number;
