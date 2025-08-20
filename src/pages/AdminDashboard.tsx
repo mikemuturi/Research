@@ -41,9 +41,11 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
-      {renderTabContent()}
-    </AdminLayout>
+    <div className="min-h-screen bg-gray-50">
+      <AdminLayout activeTab={activeTab} onTabChange={setActiveTab}>
+        {renderTabContent()}
+      </AdminLayout>
+    </div>
   );
 };
 

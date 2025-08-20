@@ -13,15 +13,14 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/survey" element={<SurveyPage />} />
-          <Route path="/results/:id" element={<ResultsPage />} />
+          <Route path="/" element={<><Navbar /><HomePage /></>} />
+          <Route path="/about" element={<><Navbar /><AboutPage /></>} />
+          <Route path="/survey" element={<><Navbar /><SurveyPage /></>} />
+          <Route path="/results/:id" element={<><Navbar /><ResultsPage /></>} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/privacy" element={<><Navbar /><PrivacyPage /></>} />
         </Routes>
       </div>
     </Router>
