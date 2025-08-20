@@ -47,7 +47,17 @@ const SubmissionsTab: React.FC = () => {
 
   const handleExport = () => {
     try {
-      surveyAPI.exportCSV(filters);
+      surveyAPI.exportCSV(filters).then(response => {
+        const blob = new Blob([response.data], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'rafsia_submissions.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      });
     } catch (error) {
       console.error('Error exporting submissions:', error);
       alert('Error exporting data. Please try again.');

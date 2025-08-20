@@ -40,14 +40,14 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('user_data', JSON.stringify(user));
       
       // Redirect based on user role
-      if (user.role === 'admin') {
+      if (user.is_staff || user.is_superuser) {
         navigate('/admin');
       } else {
         navigate('/dashboard');
       }
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response?.status === 400) {
+      if (error.response?.status === 400 || error.response?.status === 401) {
         setError('Invalid credentials. Please check your username/email and password.');
       } else {
         setError('Login failed. Please try again.');

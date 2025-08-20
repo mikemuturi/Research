@@ -185,7 +185,12 @@ const SurveyForm: React.FC = () => {
           question: Number(questionId),
           value: Number(value)
         })),
-        comments: formData.comments
+        // Add comments to submission data
+        technical_comments: formData.comments.technical,
+        economic_comments: formData.comments.economic,
+        socio_cultural_comments: formData.comments.socio_cultural,
+        environmental_comments: formData.comments.environmental,
+        policy_regulatory_comments: formData.comments.policy_regulatory,
       };
 
       const response = await surveyAPI.submitSurvey(submissionData);

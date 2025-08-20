@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Calendar, Users } from 'lucide-react';
-import { surveyAPI } from '@/lib/api';
-import { Project } from '@/types';
+import { surveyAPI } from '../../lib/api';
+import { Project } from '../../types';
 
 const ProjectsTab: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
-import { surveyAPI } from '@/lib/api';
-import { Question } from '@/types';
+import { surveyAPI } from '../../lib/api';
+import { Question } from '../../types';
 
 const QuestionsTab: React.FC = () => {
   const [questions, setQuestions] = useState<Question[]>([]);

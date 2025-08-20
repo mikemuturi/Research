@@ -28,18 +28,21 @@ const AdminLoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Check admin credentials
-      if (formData.username === 'admin' && formData.password === 'admin123') {
-        // Mock JWT tokens for admin
-        localStorage.setItem('access_token', 'mock-admin-access-token');
-        localStorage.setItem('refresh_token', 'mock-admin-refresh-token');
-        localStorage.setItem('user_role', 'admin');
+      const response = await authAPI.login(formData.username, formData.password);
+      const { access, refresh, user } = response.data;
+      
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('user_role', user.role);
+      
+      if (user.is_staff || user.is_superuser) {
         navigate('/admin');
       } else {
-        setError('Invalid admin credentials. Use admin/admin123');
+        setError('Access denied. Admin privileges required.');
       }
     } catch (error) {
-      setError('Login failed. Please try again.');
+      console.error('Login error:', error);
+      setError('Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Download, Eye } from 'lucide-react';
-import { adminAPI } from '@/lib/api';
+import { adminAPI } from '../../lib/api';
 
 interface Answer {
   id: number;
