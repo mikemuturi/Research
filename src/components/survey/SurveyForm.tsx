@@ -568,3 +568,6 @@ const SurveyForm: React.FC = () => {
 };
 
 export default SurveyForm;
+
+
+export default SurveyForm
