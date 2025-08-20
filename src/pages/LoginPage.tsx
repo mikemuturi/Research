@@ -29,25 +29,28 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     
     try {
-      // Check admin credentials first
-      if (formData.usernameOrEmail === 'admin' && formData.password === 'admin123') {
-        localStorage.setItem('access_token', 'mock-admin-access-token');
-        localStorage.setItem('refresh_token', 'mock-admin-refresh-token');
-        localStorage.setItem('user_role', 'admin');
+      const response = await authAPI.login(formData.usernameOrEmail, formData.password);
+      const { access, refresh, user } = response.data;
+      
+      // Store tokens
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('user_role', user.role);
+      localStorage.setItem('user_data', JSON.stringify(user));
+      
+      // Redirect based on user role
+      if (user.role === 'admin') {
         navigate('/admin');
-      }
-      // Check regular user credentials
-      else if ((formData.usernameOrEmail === 'user' || formData.usernameOrEmail === 'user@example.com') && formData.password === 'password') {
-        localStorage.setItem('access_token', 'mock-user-token');
-        localStorage.setItem('refresh_token', 'mock-user-refresh-token');
-        localStorage.setItem('user_role', 'user');
+      } else {
         navigate('/dashboard');
       }
-      else {
-        setError('Invalid credentials. Try admin/admin123 for admin or user/password for regular user');
-      }
     } catch (error) {
-      setError('Login failed. Please try again.');
+      console.error('Login error:', error);
+      if (error.response?.status === 400) {
+        setError('Invalid credentials. Please check your username/email and password.');
+      } else {
+        setError('Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

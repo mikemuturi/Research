@@ -50,8 +50,8 @@ export default api;
 
 // Auth API
 export const authAPI = {
-  login: (username: string, password: string) =>
-    api.post('/auth/token/', { username, password }),
+  login: (usernameOrEmail: string, password: string) =>
+    api.post('/auth/token/', { username_or_email: usernameOrEmail, password }),
   
   refresh: (refresh_token: string) =>
     api.post('/auth/token/refresh/', { refresh: refresh_token }),
