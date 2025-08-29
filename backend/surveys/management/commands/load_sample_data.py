@@ -437,3 +437,4 @@ class Command(BaseCommand):
         for dim in ["technical", "economic", "socio_cultural", "environmental", "policy_regulatory"]:
             cnt = Question.objects.filter(dimension=dim).count()
             self.stdout.write(f"  • {dim.replace('_',' ').title()}: {cnt}")
+ 

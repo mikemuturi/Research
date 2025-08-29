@@ -10,4 +10,6 @@ urlpatterns = [
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/surveys/", include("surveys.urls")),
     path("api/interviews/", include("interviews.urls")),
+    # path('api/users/', include('users.urls')),
+
 ]
