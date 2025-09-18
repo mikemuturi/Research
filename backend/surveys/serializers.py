@@ -196,6 +196,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'email', 'phone', 'role', 'institution', 'institution_name',
             'institution_name_display', 'county', 'consent_given', 'is_anonymous',
+            # "option_message",
             'submitted_at', 'technical_score', 'economic_score', 'socio_cultural_score',
             'environmental_score', 'policy_regulatory_score', 'overall_score',
             'readiness_level', 'answers', 'dimension_comments', 'recommendations', 'scores_by_dimension'
