@@ -1,1 +1,9 @@
-{}
+{
+  "components/maps/ReadinessMap.tsx -> react-leaflet": {
+    "id": 33538,
+    "files": [
+      "static/chunks/d0deef33.a515038d95242dd3.js",
+      "static/chunks/538.7033fd17cc39d195.js"
+    ]
+  }
+}

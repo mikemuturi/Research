@@ -141,8 +141,22 @@
 //   );
 // }
 
-import Dashboard from '@/components/admin/Dashboard';
+//import Dashboard from '@/components/admin/Dashboard';
+
+//export default function AdminDashboardPage() {
+  //return <Dashboard />;
+//}
+//
+"use client";
+
+import { Suspense } from "react";
+import Dashboard from "@/components/admin/Dashboard";
 
 export default function AdminDashboardPage() {
-  return <Dashboard />;
+  return (
+    <Suspense fallback={<div>Loading dashboard...</div>}>
+      <Dashboard />
+    </Suspense>
+  );
 }
+
