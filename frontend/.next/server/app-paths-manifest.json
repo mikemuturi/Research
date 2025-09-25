@@ -1,17 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/about/page": "app/about/page.js",
-  "/admin/forgotpassword/page": "app/admin/forgotpassword/page.js",
-  "/admin/interviews/page": "app/admin/interviews/page.js",
-  "/admin/login/page": "app/admin/login/page.js",
-  "/admin/map/page": "app/admin/map/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/contact/page": "app/contact/page.js",
-  "/isp/page": "app/isp/page.js",
-  "/page": "app/page.js",
-  "/privacy/page": "app/privacy/page.js",
-  "/register/page": "app/register/page.js",
   "/results/[id]/page": "app/results/[id]/page.js",
+  "/admin/page": "app/admin/page.js",
   "/survey/page": "app/survey/page.js",
-  "/user/page": "app/user/page.js"
+  "/page": "app/page.js"
 }
