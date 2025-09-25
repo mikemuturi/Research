@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -7,12 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
 SECRET_KEY = config("DJANGO_SECRET", default="dev-secret")
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = config("DEBUG", default=True, cast=bool)  # Changed to True for development
 
-# Fixed ALLOWED_HOSTS - removed the stray comma
+# Fixed ALLOWED_HOSTS
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="rafsia.org,www.rafsia.org,138.68.16.159,localhost,127.0.0.1",
+    default="localhost,127.0.0.1,0.0.0.0",
     cast=Csv()
 )
 
@@ -92,7 +93,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Added for production
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 
 # Default primary key field type
@@ -116,13 +117,49 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# CORS settings - Fixed for production
-CORS_ALLOWED_ORIGINS = config(
-    "CORS_ALLOWED_ORIGINS",
-    default="https://rafsia.org,https://www.rafsia.org,http://rafsia.org,http://www.rafsia.org",
-    cast=Csv(),
-)
+# CORS settings - Fixed for both development and production
+if DEBUG:
+    # Development CORS settings
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+        "http://localhost:5173",  # Vite default port
+        "http://127.0.0.1:5173",
+    ]
+else:
+    # Production CORS settings
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = config(
+        "CORS_ALLOWED_ORIGINS",
+        default="https://rafsia.org,https://www.rafsia.org",
+        cast=Csv(),
+    )
+
+# Additional CORS settings
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # Production security settings
 if not DEBUG:
@@ -140,4 +177,35 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = True
+else:
+    # Development settings - disable security features that interfere with development
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
+# Logging configuration for debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO' if DEBUG else 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO' if DEBUG else 'WARNING',
+            'propagate': False,
+        },
+        'corsheaders': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+    },
+}
