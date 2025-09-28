@@ -31,9 +31,12 @@ export interface Project {
   start_date: string;
   end_date?: string;
 }
-
 export interface Submission {
+  recommendations: never[];
+  is_anonymous: boolean;
+  institution_name: string;
   id: number;
+  institution: number;
   name: string;
   role: string;
   gender?: string;
@@ -45,7 +48,29 @@ export interface Submission {
   overall_score: number;
   readiness_level: string;
   submitted_at: string;
+  technical_score: number;
+  economic_score: number;
+  socio_cultural_score: number;
+  environmental_score: number;
+  policy_regulatory_score: number;
+  scores_by_dimension?: Record<string, number>;
 }
+
+
+// export interface Submission {
+//   id: number;
+//   name: string;
+//   role: string;
+//   gender?: string;
+//   survey_type: "rafsia" | "isp";
+//   survey_type_display: string;
+//   project_name?: string;
+//   institution_name_display: string;
+//   county: string;
+//   overall_score: number;
+//   readiness_level: string;
+//   submitted_at: string;
+// }
 
 export interface InterviewNote {
   id: number;
