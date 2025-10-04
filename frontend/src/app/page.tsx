@@ -44,7 +44,7 @@ export default function HomePage() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-2xl mx-auto px-4 sm:px-0">
+          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-2xl mx-auto px-4 sm:px-0">
             <div className="text-center">
               <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">5</div>
               <div className="text-xs md:text-sm text-gray-600">Readiness Dimensions</div>
@@ -61,7 +61,7 @@ export default function HomePage() {
               <div className="text-2xl md:text-3xl font-bold text-blue-600 mb-1">100%</div>
               <div className="text-xs md:text-sm text-gray-600">Free to Use</div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
 
