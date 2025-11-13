@@ -363,10 +363,11 @@ import QuestionsTab from '@/components/admin/QuestionsTab';
 import AnswersTab from '@/components/admin/AnswersTab';
 import ProjectsTab from '@/components/admin/ProjectsTab';
 import UsersTab from '@/components/admin/UsersTab';
+import CommentsTab from '@/components/admin/CommentsTab';
 
-type TabKey = 'submissions' | 'surveys' | 'questions' | 'answers' | 'projects' | 'users';
+type TabKey = 'submissions' | 'surveys' | 'questions' | 'answers' | 'projects' | 'users' | 'comments';
 
-const TABS: TabKey[] = ['submissions', 'surveys', 'questions', 'answers', 'projects', 'users'];
+const TABS: TabKey[] = ['submissions', 'surveys', 'questions', 'answers', 'projects', 'users', 'comments'];
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -412,6 +413,8 @@ export default function AdminDashboardPage() {
         return <ProjectsTab />;
       case 'users':
         return <UsersTab />;
+      case 'comments':
+        return <CommentsTab />;
       default:
         return <SubmissionsTab />;
     }

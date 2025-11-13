@@ -784,18 +784,31 @@ const SurveyForm: React.FC = () => {
     if (!validateStep(currentStep)) return;
     setLoading(true);
     try {
+      const dimensionComments = Object.fromEntries(
+        Object.entries(formData.dimension_comments ?? {}).filter(
+          ([, value]) => typeof value === 'string' && value.trim().length > 0
+        )
+      );
+
       const submissionData = {
         ...formData,
         institution: formData.institution ? Number(formData.institution) : null,
         project: formData.project ? Number(formData.project) : null,
         survey_type: selectedProject?.survey_type || 'rafsia',
+        dimension_comments: dimensionComments,
         answers: Object.entries(formData.answers).map(([questionId, value]) => ({
           question: Number(questionId),
           value: Number(value)
         })),
       };
       const response = await surveyAPI.submitSurvey(submissionData);
-      router.push(`/results/${response.data.id}`);
+      const submissionId = response?.data?.id;
+
+      if (!submissionId) {
+        throw new Error('Submission completed but no identifier was returned.');
+      }
+
+      router.push(`/results/${submissionId}?public=true`);
     } catch (error: any) {
       console.error('Error submitting survey:', error);
       alert('Error submitting survey. Please try again.');

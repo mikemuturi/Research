@@ -360,38 +360,151 @@ class Submission(models.Model):
         else:  # rafsia
             return ['technical', 'economic', 'socio_cultural', 'environmental', 'policy_regulatory']
     
+    LIKERT_PERCENTAGE_MAP = {
+        1: 20,
+        2: 40,
+        3: 60,
+        4: 80,
+        5: 100,
+    }
+
+    DIMENSION_WEIGHTS = {
+        'technical': 0.226,
+        'economic': 0.235,
+        'socio_cultural': 0.133,
+        'policy_regulatory': 0.164,
+        'environmental': 0.268,
+    }
+
     def calculate_scores(self):
-        """Calculate dimension and overall scores based on survey type"""
+        """
+        Calculate dimension and overall scores using weighted model factors.
+
+        Steps per dimension:
+          1. Convert Likert responses (1-5) into percentage scores using 20-point increments.
+          2. Average the percentage scores for the dimension.
+          3. Multiply the average by the model factor (weight) to obtain the weighted contribution.
+        """
         dimensions = self.get_dimensions_for_survey_type()
-        scores = {}
-        
+        dimension_stats = {}
+
         for dimension in dimensions:
             answers = self.answers.filter(question__dimension=dimension)
             if answers.exists():
-                avg_score = sum(answer.value for answer in answers) / answers.count()
-                # Convert 1-5 scale to 0-100 scale
-                normalized_score = ((avg_score - 1) / 4) * 100
-                scores[f"{dimension}_score"] = normalized_score
+                percent_scores = [
+                    self.LIKERT_PERCENTAGE_MAP.get(answer.value, answer.value * 20)
+                    for answer in answers
+                ]
+                average_percentage = sum(percent_scores) / len(percent_scores)
             else:
-                scores[f"{dimension}_score"] = 0
-        
-        # Calculate overall score
-        overall_score = sum(scores.values()) / len(scores) if scores else 0
-        scores['overall_score'] = overall_score
-        
-        # Determine readiness level
-        if overall_score >= 80:
-            scores['readiness_level'] = 'very_ready'
-        elif overall_score >= 60:
-            scores['readiness_level'] = 'not_sure'
+                average_percentage = 0
+
+            weight = self.DIMENSION_WEIGHTS.get(dimension)
+            weighted_score = average_percentage * weight if weight else average_percentage
+
+            # Persist the average percentage to the model field for historical compatibility
+            setattr(self, f"{dimension}_score", average_percentage)
+
+            dimension_stats[dimension] = {
+                'average_percentage': average_percentage,
+                'weighted_score': weighted_score,
+                'question_count': answers.count(),
+                'weight': weight,
+            }
+
+        # Calculate overall readiness
+        weighted_sum = sum(
+            stats['weighted_score']
+            for dim, stats in dimension_stats.items()
+            if self.DIMENSION_WEIGHTS.get(dim)
+        )
+        total_weight = sum(
+            stats['weight'] for stats in dimension_stats.values() if stats['weight']
+        )
+
+        if total_weight:
+            overall_percentage = weighted_sum / total_weight
         else:
-            scores['readiness_level'] = 'not_ready'
-        
-        # Update model fields
-        for field, value in scores.items():
-            setattr(self, field, value)
-        
-        return scores
+            overall_percentage = 0
+
+        # Store both the weighted sum (per provided formula) and the normalized percentage.
+        # overall_score keeps the weighted sum to honour the provided model.
+        self.overall_score = weighted_sum
+        self._overall_percentage = overall_percentage
+        self._dimension_stats = dimension_stats
+
+        # Determine readiness level based on normalized percentage
+        if overall_percentage >= 80:
+            readiness_level = 'very_ready'
+        elif overall_percentage >= 60:
+            readiness_level = 'not_sure'
+        else:
+            readiness_level = 'not_ready'
+
+        self.readiness_level = readiness_level
+
+        return {
+            'overall_weighted_score': weighted_sum,
+            'overall_percentage': overall_percentage,
+            'readiness_level': readiness_level,
+            'dimension_stats': dimension_stats,
+        }
+
+    def get_dimension_stats(self):
+        """
+        Return cached dimension statistics or compute them on demand.
+        Ensures serializers can access both average percentages and weighted scores.
+        """
+        if hasattr(self, '_dimension_stats'):
+            return self._dimension_stats
+
+        # Re-compute without mutating persisted fields
+        dimensions = self.get_dimensions_for_survey_type()
+        dimension_stats = {}
+
+        for dimension in dimensions:
+            answers = self.answers.filter(question__dimension=dimension)
+            if answers.exists():
+                percent_scores = [
+                    self.LIKERT_PERCENTAGE_MAP.get(answer.value, answer.value * 20)
+                    for answer in answers
+                ]
+                average_percentage = sum(percent_scores) / len(percent_scores)
+            else:
+                average_percentage = 0
+
+            weight = self.DIMENSION_WEIGHTS.get(dimension)
+            weighted_score = average_percentage * weight if weight else average_percentage
+
+            dimension_stats[dimension] = {
+                'average_percentage': average_percentage,
+                'weighted_score': weighted_score,
+                'question_count': answers.count(),
+                'weight': weight,
+            }
+
+        self._dimension_stats = dimension_stats
+        return dimension_stats
+
+    def get_overall_percentage(self):
+        """
+        Return normalized overall percentage (weighted_sum / total_weight).
+        """
+        if hasattr(self, '_overall_percentage'):
+            return self._overall_percentage
+
+        stats = self.get_dimension_stats()
+        weighted_sum = sum(
+            info['weighted_score']
+            for dim, info in stats.items()
+            if self.DIMENSION_WEIGHTS.get(dim)
+        )
+        total_weight = sum(
+            info['weight'] for info in stats.values() if info['weight']
+        )
+        if not total_weight:
+            return 0
+        return weighted_sum / total_weight
     
     def get_recommendations(self):
         """Generate recommendations based on low-scoring dimensions and survey type"""

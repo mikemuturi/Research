@@ -436,18 +436,23 @@ class InstitutionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
 
-class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Question.objects.filter(is_active=True)
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         queryset = super().get_queryset()
         role = self.request.query_params.get('role')
-        survey_type = self.request.query_params.get('survey_type', 'rafsia')
+        survey_type = self.request.query_params.get('survey_type')
         dimension = self.request.query_params.get('dimension')
 
-        queryset = queryset.filter(survey_type=survey_type)
+        # Restrict to active questions for anonymous/public access
+        if not self.request.user.is_authenticated:
+            queryset = queryset.filter(is_active=True)
+
+        if survey_type:
+            queryset = queryset.filter(survey_type=survey_type)
 
         if role:
             queryset = queryset.filter(Q(role=role) | Q(role='both'))
@@ -456,6 +461,13 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(dimension=dimension)
 
         return queryset
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 class SubmissionViewSet(viewsets.ModelViewSet):
@@ -599,6 +611,91 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             )
 
         return Response(analysis)
+
+    @action(detail=False, methods=['get'])
+    def get_all_comments(self, request):
+        """Get all dimension comments with submission info, filtered by query params"""
+        queryset = self.get_queryset()
+        
+        # Apply filters
+        survey_type = request.query_params.get('survey_type')
+        role = request.query_params.get('role')
+        dimension = request.query_params.get('dimension')
+        
+        if survey_type:
+            queryset = queryset.filter(survey_type=survey_type)
+        if role:
+            queryset = queryset.filter(role=role)
+        
+        # Get comments from filtered submissions
+        comments = DimensionComment.objects.filter(submission__in=queryset)
+        
+        if dimension:
+            comments = comments.filter(dimension=dimension)
+        
+        # Order by most recent first
+        comments = comments.select_related('submission').order_by('-created_at')
+        
+        from .serializers import CommentWithSubmissionSerializer
+        serializer = CommentWithSubmissionSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def export_comments_csv(self, request):
+        """Export dimension comments to CSV with filters"""
+        queryset = self.get_queryset()
+        
+        # Apply filters
+        survey_type = request.query_params.get('survey_type')
+        role = request.query_params.get('role')
+        dimension = request.query_params.get('dimension')
+        
+        if survey_type:
+            queryset = queryset.filter(survey_type=survey_type)
+        if role:
+            queryset = queryset.filter(role=role)
+        
+        # Get comments from filtered submissions
+        comments = DimensionComment.objects.filter(submission__in=queryset)
+        
+        if dimension:
+            comments = comments.filter(dimension=dimension)
+        
+        comments = comments.select_related('submission').order_by('-created_at')
+        
+        response = HttpResponse(content_type='text/csv')
+        from datetime import datetime
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        filename = f"comments_{survey_type or 'all'}_{dimension or 'all'}_{date_str}.csv"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'Comment ID', 'Dimension', 'Comment', 'Created At',
+            'Submission ID', 'Respondent Name', 'Role', 'Survey Type',
+            'Institution', 'County', 'Submitted At'
+        ])
+        
+        # Write data
+        for comment in comments:
+            submission = comment.submission
+            writer.writerow([
+                comment.id,
+                comment.get_dimension_display(),
+                comment.comment,
+                comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                submission.id,
+                submission.name or 'Anonymous',
+                submission.get_role_display(),
+                submission.get_survey_type_display(),
+                submission.institution.name if submission.institution else submission.institution_name or '',
+                submission.county,
+                submission.submitted_at.strftime('%Y-%m-%d %H:%M:%S'),
+            ])
+        
+        return response
 
     # -------------------
     # CSV EXPORT
@@ -815,6 +912,146 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             lines.append(' '.join(current_line))
 
         return lines
+
+    @action(detail=False, methods=['get'])
+    def get_respondents(self, request):
+        """Get unique respondents from submissions with filters"""
+        queryset = self.get_queryset()
+        
+        # Apply filters
+        role = request.query_params.get('role')
+        search = request.query_params.get('search', '').strip()
+        
+        if role:
+            queryset = queryset.filter(role=role)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(email__icontains=search) |
+                Q(institution_name__icontains=search) |
+                Q(county__icontains=search)
+            )
+        
+        # Get unique respondents - group by email if available, otherwise by name+email
+        from django.db.models import Max, Count
+        respondents_data = queryset.values(
+            'name', 'email', 'phone', 'role', 'gender', 'county',
+            'institution_name', 'survey_type'
+        ).annotate(
+            submission_count=Count('id'),
+            latest_submission=Max('submitted_at'),
+            latest_institution=Max('institution__name')
+        ).order_by('-latest_submission')
+        
+        # Format the response
+        respondents = []
+        seen_emails = set()
+        seen_names = set()
+        
+        for item in respondents_data:
+            # Use email as primary key if available, otherwise name+county
+            key = item['email'] if item['email'] else f"{item['name']}_{item['county']}"
+            
+            if not item['email'] or item['email'] not in seen_emails:
+                if item['email']:
+                    seen_emails.add(item['email'])
+                else:
+                    if key in seen_names:
+                        continue
+                    seen_names.add(key)
+                
+                respondents.append({
+                    'name': item['name'] or 'Anonymous',
+                    'email': item['email'] or '',
+                    'phone': item['phone'] or '',
+                    'role': item['role'],
+                    'gender': item['gender'] or '',
+                    'county': item['county'],
+                    'institution_name': item['latest_institution'] or item['institution_name'] or '',
+                    'survey_type': item['survey_type'],
+                    'submission_count': item['submission_count'],
+                    'latest_submission': item['latest_submission'].isoformat() if item['latest_submission'] else None,
+                })
+        
+        return Response({
+            'count': len(respondents),
+            'results': respondents
+        })
+
+    @action(detail=False, methods=['get'])
+    def export_respondents_csv(self, request):
+        """Export unique respondents to CSV"""
+        queryset = self.get_queryset()
+        
+        # Apply filters
+        role = request.query_params.get('role')
+        search = request.query_params.get('search', '').strip()
+        
+        if role:
+            queryset = queryset.filter(role=role)
+        
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(email__icontains=search) |
+                Q(institution_name__icontains=search) |
+                Q(county__icontains=search)
+            )
+        
+        # Get unique respondents
+        from django.db.models import Max, Count
+        respondents_data = queryset.values(
+            'name', 'email', 'phone', 'role', 'gender', 'county',
+            'institution_name', 'survey_type'
+        ).annotate(
+            submission_count=Count('id'),
+            latest_submission=Max('submitted_at'),
+            latest_institution=Max('institution__name')
+        ).order_by('-latest_submission')
+        
+        response = HttpResponse(content_type='text/csv')
+        from datetime import datetime
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        response['Content-Disposition'] = f'attachment; filename="respondents_{date_str}.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write header
+        writer.writerow([
+            'Name', 'Email', 'Phone', 'Role', 'Gender', 'County',
+            'Institution', 'Survey Type', 'Total Submissions', 'Latest Submission'
+        ])
+        
+        # Write data
+        seen_emails = set()
+        seen_names = set()
+        
+        for item in respondents_data:
+            key = item['email'] if item['email'] else f"{item['name']}_{item['county']}"
+            
+            if not item['email'] or item['email'] not in seen_emails:
+                if item['email']:
+                    seen_emails.add(item['email'])
+                else:
+                    if key in seen_names:
+                        continue
+                    seen_names.add(key)
+                
+                writer.writerow([
+                    item['name'] or 'Anonymous',
+                    item['email'] or '',
+                    item['phone'] or '',
+                    item['role'],
+                    item['gender'] or '',
+                    item['county'],
+                    item['latest_institution'] or item['institution_name'] or '',
+                    item['survey_type'],
+                    item['submission_count'],
+                    item['latest_submission'].strftime('%Y-%m-%d %H:%M:%S') if item['latest_submission'] else '',
+                ])
+        
+        return response
 
     # -------------------
     # STATS

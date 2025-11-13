@@ -64,9 +64,9 @@
 
 'use client';
 import React from 'react';
-import { BarChart3, FileText, ListChecks, Layers3, Users, ClipboardList } from 'lucide-react';
+import { BarChart3, FileText, ListChecks, Layers3, Users, ClipboardList, MessageSquare } from 'lucide-react';
 
-type TabKey = 'submissions' | 'surveys' | 'questions' | 'answers' | 'projects' | 'users';
+type TabKey = 'submissions' | 'surveys' | 'questions' | 'answers' | 'projects' | 'users' | 'comments';
 
 const ICONS: Record<TabKey, React.ReactNode> = {
   submissions: <BarChart3 className="h-5 w-5" />,
@@ -75,6 +75,7 @@ const ICONS: Record<TabKey, React.ReactNode> = {
   answers: <ListChecks className="h-5 w-5" />,
   projects: <Layers3 className="h-5 w-5" />,
   users: <Users className="h-5 w-5" />,
+  comments: <MessageSquare className="h-5 w-5" />,
 };
 
 const TAB_LABELS: Record<TabKey, string> = {
@@ -84,6 +85,7 @@ const TAB_LABELS: Record<TabKey, string> = {
   answers: 'Answers',
   projects: 'Projects',
   users: 'Users',
+  comments: 'Comments',
 };
 
 export default function AdminLayout({

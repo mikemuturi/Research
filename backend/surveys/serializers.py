@@ -38,10 +38,11 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = [
-            'name', 'email', 'phone', 'role', 'gender', 'institution', 'institution_name', 
+            'id', 'name', 'email', 'phone', 'role', 'gender', 'institution', 'institution_name', 
             'county', 'project', 'survey_type', 'consent_given', 'is_anonymous', 
-            'answers', 'dimension_comments'
+            'answers', 'dimension_comments', 'overall_score', 'readiness_level'
         ]
+        read_only_fields = ['id', 'overall_score', 'readiness_level']
     
     def create(self, validated_data):
         answers_data = validated_data.pop('answers')
@@ -89,6 +90,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     survey_type_display = serializers.CharField(source='get_survey_type_display', read_only=True)
     recommendations = serializers.SerializerMethodField()
     scores_by_dimension = serializers.SerializerMethodField()
+    overall_percentage = serializers.SerializerMethodField()
     
     class Meta:
         model = Submission
@@ -97,8 +99,9 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             'institution_name_display', 'county', 'project', 'project_name', 'survey_type', 
             'survey_type_display', 'consent_given', 'is_anonymous', 'submitted_at', 
             'technical_score', 'economic_score', 'socio_cultural_score', 'environmental_score', 
-            'policy_regulatory_score', 'strategic_score', 'overall_score', 'readiness_level', 
-            'answers', 'dimension_comments', 'recommendations', 'scores_by_dimension'
+            'policy_regulatory_score', 'strategic_score', 'overall_score', 'overall_percentage',
+            'readiness_level', 'answers', 'dimension_comments', 'recommendations',
+            'scores_by_dimension'
         ]
     
     def get_institution_name_display(self, obj):
@@ -110,19 +113,19 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         return obj.get_recommendations()
     
     def get_scores_by_dimension(self, obj):
-        scores = {
-            'technical': obj.technical_score,
-            'economic': obj.economic_score,
-            'socio_cultural': obj.socio_cultural_score,
-            'environmental': obj.environmental_score,
-            'policy_regulatory': obj.policy_regulatory_score,
+        stats = obj.get_dimension_stats()
+        data = {}
+        for dimension, info in stats.items():
+            data[dimension] = {
+                'average_percentage': info.get('average_percentage', 0),
+                'weighted_score': info.get('weighted_score', 0),
+                'question_count': info.get('question_count', 0),
+                'weight': info.get('weight'),
         }
-        
-        # Add strategic score for ISP surveys
-        if obj.survey_type == 'isp':
-            scores['strategic'] = obj.strategic_score
-            
-        return scores
+        return data
+
+    def get_overall_percentage(self, obj):
+        return obj.get_overall_percentage()
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     institution_name_display = serializers.SerializerMethodField()
@@ -139,3 +142,11 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     
     def get_institution_name_display(self, obj):
         return obj.institution.name if obj.institution else obj.institution_name
+
+class CommentWithSubmissionSerializer(serializers.ModelSerializer):
+    dimension_label = serializers.CharField(source='get_dimension_display', read_only=True)
+    submission = SubmissionListSerializer(read_only=True)
+    
+    class Meta:
+        model = DimensionComment
+        fields = ['id', 'dimension', 'dimension_label', 'comment', 'created_at', 'submission']

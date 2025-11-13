@@ -250,6 +250,26 @@ export const surveyAPI = {
     return api.get("/surveys/questions/", { params });
   },
 
+  createQuestion: (data: {
+    text: string;
+    dimension: string;
+    role: string;
+    survey_type: "rafsia" | "isp";
+    order?: number | null;
+    is_active?: boolean;
+  }) => api.post("/surveys/questions/", data),
+
+  updateQuestion: (id: number | string, data: Partial<{
+    text: string;
+    dimension: string;
+    role: string;
+    survey_type: "rafsia" | "isp";
+    order?: number | null;
+    is_active?: boolean;
+  }>) => api.patch(`/surveys/questions/${id}/`, data),
+
+  deleteQuestion: (id: number | string) => api.delete(`/surveys/questions/${id}/`),
+
   submitSurvey: (data: any) => api.post("/surveys/submissions/", data),
 
   getSubmission: (id: string, isPublic?: boolean) =>
@@ -275,6 +295,14 @@ export const surveyAPI = {
 
   getProjects: () => api.get("/surveys/projects/"),
 
+  createProject: (data: {
+    name: string;
+    description?: string;
+    start_date: string;
+    end_date?: string | null;
+    survey_type: "rafsia" | "isp";
+  }) => api.post("/surveys/projects/", data),
+
   // CRUD operations for submissions
   deleteSubmission: (id: string) => api.delete(`/surveys/submissions/${id}/`),
 
@@ -287,6 +315,24 @@ export const surveyAPI = {
 
   getCommentsAnalysis: (filters?: any) =>
     api.get("/surveys/submissions/comments_analysis/", { params: filters }),
+
+  getAllComments: (filters?: any) =>
+    api.get("/surveys/submissions/get_all_comments/", { params: filters }),
+
+  exportCommentsCSV: (filters?: any) =>
+    api.get("/surveys/submissions/export_comments_csv/", { 
+      params: filters, 
+      responseType: 'blob' 
+    }),
+
+  getRespondents: (filters?: any) =>
+    api.get("/surveys/submissions/get_respondents/", { params: filters }),
+
+  exportRespondentsCSV: (filters?: any) =>
+    api.get("/surveys/submissions/export_respondents_csv/", {
+      params: filters,
+      responseType: 'blob',
+    }),
 
   // Convenience wrappers by survey type
   getRafsiaQuestions: (role?: string, dimension?: string) =>

@@ -149,6 +149,13 @@ export interface DimensionComment {
   updated_at?: string;
 }
 
+export interface DimensionScoreSummary {
+  average_percentage: number;
+  weighted_score: number;
+  question_count: number;
+  weight?: number | null;
+}
+
 export interface Submission {
   id: number;
   name?: string;
@@ -174,11 +181,12 @@ export interface Submission {
   policy_regulatory_score: number;
   strategic_score?: number; // only for ISP
   overall_score: number;
+  overall_percentage?: number;
   readiness_level: "very_ready" | "not_sure" | "not_ready";
   answers?: Answer[];
   dimension_comments?: DimensionComment[];
   recommendations?: string[];
-  scores_by_dimension?: Record<string, number>;
+  scores_by_dimension?: Record<string, DimensionScoreSummary>;
 }
 
 export interface CommentsAnalysis {

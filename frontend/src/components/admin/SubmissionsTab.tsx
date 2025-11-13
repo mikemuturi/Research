@@ -1,7 +1,19 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BarChart3, Users, FileText, TrendingUp, Download, Filter, Building2, Wifi } from 'lucide-react';
+import {
+  BarChart3,
+  Users,
+  FileText,
+  TrendingUp,
+  Download,
+  Filter,
+  Building2,
+  Wifi,
+  Eye,
+  Trash2,
+  AlertTriangle,
+} from 'lucide-react';
 import { surveyAPI } from '@/lib/api';
 import { Statistics, Submission } from '@/types';
 import Button from '@/components/ui/Button';
@@ -14,10 +26,14 @@ type SurveyType = 'all' | 'rafsia' | 'isp';
 
 export default function SubmissionsTab() {
   const [statistics, setStatistics] = useState<Statistics | null>(null);
+  const [globalStatistics, setGlobalStatistics] = useState<Statistics | null>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [activeSurveyType, setActiveSurveyType] = useState<SurveyType>('all');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [submissionToDelete, setSubmissionToDelete] = useState<Submission | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [filters, setFilters] = useState({
     role: '',
@@ -27,6 +43,19 @@ export default function SubmissionsTab() {
     date_from: '',
     date_to: '',
   });
+
+  useEffect(() => {
+    const loadGlobalStatistics = async () => {
+      try {
+        const response = await surveyAPI.getStatistics();
+        setGlobalStatistics(response.data);
+      } catch (error) {
+        console.error('Error loading global statistics:', error);
+      }
+    };
+
+    loadGlobalStatistics();
+  }, []);
 
   useEffect(() => {
     loadDashboardData();
@@ -98,20 +127,15 @@ export default function SubmissionsTab() {
   };
 
   const getSurveyTypeStats = () => {
-    if (!statistics?.by_survey_type) {
-      console.warn('No by_survey_type data in statistics:', statistics);
+    if (!globalStatistics?.by_survey_type) {
       return null;
     }
     
     const stats = {
-      rafsia: statistics.by_survey_type.rafsia || 0,
-      isp: statistics.by_survey_type.isp || 0,
-      total: statistics.total_submissions || 0
+      rafsia: globalStatistics.by_survey_type.rafsia || 0,
+      isp: globalStatistics.by_survey_type.isp || 0,
+      total: globalStatistics.total_submissions || 0,
     };
-    
-    console.log('Survey type stats:', stats);
-    console.log('Raw statistics:', statistics);
-    
     return stats;
   };
 
@@ -131,6 +155,38 @@ export default function SubmissionsTab() {
   };
 
   const surveyTypeStats = getSurveyTypeStats();
+
+  const handleOpenDeleteModal = (submission: Submission) => {
+    setSubmissionToDelete(submission);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteSubmission = async () => {
+    if (!submissionToDelete) return;
+    try {
+      setDeleting(true);
+      await surveyAPI.deleteSubmission(String(submissionToDelete.id));
+      setDeleteModalOpen(false);
+      setSubmissionToDelete(null);
+      await Promise.all([
+        loadDashboardData(),
+        (async () => {
+          try {
+            const response = await surveyAPI.getStatistics();
+            setGlobalStatistics(response.data);
+          } catch (error) {
+            console.error('Error refreshing global statistics:', error);
+          }
+        })(),
+      ]);
+      alert('Submission deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting submission:', error);
+      alert('Failed to delete submission. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (loading && !statistics) {
     return (
@@ -435,7 +491,7 @@ export default function SubmissionsTab() {
                       {submission.county}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      {Math.round(submission.overall_score)}%
+                      {Math.round(submission.overall_percentage ?? submission.overall_score ?? 0)}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -458,13 +514,26 @@ export default function SubmissionsTab() {
                       {new Date(submission.submitted_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`/results/${submission.id}`, '_blank')}
-                      >
-                        View Results
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(`/results/${submission.id}`, '_blank')}
+                          className="flex items-center space-x-1"
+                        >
+                          <Eye size={14} />
+                          <span>View</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleOpenDeleteModal(submission)}
+                          className="flex items-center space-x-1 text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 size={14} />
+                          <span>Delete</span>
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -479,6 +548,64 @@ export default function SubmissionsTab() {
           )}
         </CardContent>
       </Card>
+
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          if (!deleting) {
+            setDeleteModalOpen(false);
+            setSubmissionToDelete(null);
+          }
+        }}
+        title="Delete Submission"
+      >
+        <div className="flex items-start space-x-3">
+          <div className="mt-1">
+            <AlertTriangle className="h-6 w-6 text-red-500" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-700">
+              Are you sure you want to delete this submission? This action cannot be undone.
+            </p>
+            {submissionToDelete && (
+              <div className="mt-3 text-sm text-gray-600">
+                <p>
+                  <span className="font-semibold">Respondent:</span>{' '}
+                  {submissionToDelete.name || 'Anonymous'}
+                </p>
+                <p>
+                  <span className="font-semibold">Survey Type:</span>{' '}
+                  {submissionToDelete.survey_type.toUpperCase()}
+                </p>
+                <p>
+                  <span className="font-semibold">Submitted:</span>{' '}
+                  {new Date(submissionToDelete.submitted_at).toLocaleString()}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex justify-end space-x-4 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!deleting) {
+                setDeleteModalOpen(false);
+                setSubmissionToDelete(null);
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteSubmission}
+            disabled={deleting}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
