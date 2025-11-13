@@ -149,9 +149,9 @@
 
 import axios, { AxiosResponse } from "axios";
 
-// Use environment variable or fallback to production
+// Use environment variable or fallback to local development
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://rafsia.org/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
 console.log('API Base URL:', API_BASE_URL); // Debug log
 
@@ -247,46 +247,46 @@ export const surveyAPI = {
     if (role) params.role = role;
     if (surveyType) params.survey_type = surveyType;
     if (dimension) params.dimension = dimension;
-    return api.get("/questions/", { params });
+    return api.get("/surveys/questions/", { params });
   },
 
-  submitSurvey: (data: any) => api.post("/submissions/", data),
+  submitSurvey: (data: any) => api.post("/surveys/submissions/", data),
 
   getSubmission: (id: string, isPublic?: boolean) =>
-    api.get(`/submissions/${id}/`, { params: isPublic ? { public: "true" } : {} }),
+    api.get(`/surveys/submissions/${id}/`, { params: isPublic ? { public: "true" } : {} }),
 
   getSubmissions: (filters?: any, page?: number, pageSize?: number) => {
     const params = { ...filters };
     if (page) params.page = page;
     if (pageSize) params.page_size = pageSize;
-    return api.get("/submissions/", { params });
+    return api.get("/surveys/submissions/", { params });
   },
 
   getStatistics: (filters?: any) =>
-    api.get("/submissions/statistics/", { params: filters }),
+    api.get("/surveys/submissions/statistics/", { params: filters }),
 
   exportCSV: (filters?: any) =>
-    api.get("/submissions/export_csv/", { params: filters, responseType: 'blob' }),
+    api.get("/surveys/submissions/export_csv/", { params: filters, responseType: 'blob' }),
 
   exportPDF: (id: string) => 
-    api.get(`/submissions/${id}/export_pdf/`, { responseType: 'blob' }),
+    api.get(`/surveys/submissions/${id}/export_pdf/`, { responseType: 'blob' }),
 
-  getInstitutions: () => api.get("/institutions/"),
+  getInstitutions: () => api.get("/surveys/institutions/"),
 
-  getProjects: () => api.get("/projects/"),
+  getProjects: () => api.get("/surveys/projects/"),
 
   // CRUD operations for submissions
-  deleteSubmission: (id: string) => api.delete(`/submissions/${id}/`),
+  deleteSubmission: (id: string) => api.delete(`/surveys/submissions/${id}/`),
 
   updateComments: (id: string, comments: Record<string, string>) =>
-    api.patch(`/submissions/${id}/update_comments/`, {
+    api.patch(`/surveys/submissions/${id}/update_comments/`, {
       dimension_comments: comments,
     }),
 
-  getComments: (id: string) => api.get(`/submissions/${id}/comments/`),
+  getComments: (id: string) => api.get(`/surveys/submissions/${id}/comments/`),
 
   getCommentsAnalysis: (filters?: any) =>
-    api.get("/submissions/comments_analysis/", { params: filters }),
+    api.get("/surveys/submissions/comments_analysis/", { params: filters }),
 
   // Convenience wrappers by survey type
   getRafsiaQuestions: (role?: string, dimension?: string) =>
