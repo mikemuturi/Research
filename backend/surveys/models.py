@@ -387,7 +387,7 @@ class Submission(models.Model):
         """
         dimensions = self.get_dimensions_for_survey_type()
         dimension_stats = {}
-
+        
         for dimension in dimensions:
             answers = self.answers.filter(question__dimension=dimension)
             if answers.exists():
@@ -432,7 +432,7 @@ class Submission(models.Model):
         self.overall_score = weighted_sum
         self._overall_percentage = overall_percentage
         self._dimension_stats = dimension_stats
-
+        
         # Determine readiness level based on normalized percentage
         if overall_percentage >= 80:
             readiness_level = 'very_ready'

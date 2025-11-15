@@ -176,14 +176,14 @@ export default function SurveysTab() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
+    <Card>
+      <CardHeader>
           <h3 className="text-lg font-semibold text-gray-900">Active Surveys</h3>
           <p className="text-sm text-gray-600">
             {loading ? 'Loading surveys…' : `${projects.length} survey(s) configured`}
           </p>
-        </CardHeader>
-        <CardContent>
+      </CardHeader>
+      <CardContent>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -253,8 +253,8 @@ export default function SurveysTab() {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
+      </CardContent>
+    </Card>
 
       <Modal
         isOpen={showCreateModal}

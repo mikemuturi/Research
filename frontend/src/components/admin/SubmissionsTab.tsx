@@ -515,10 +515,10 @@ export default function SubmissionsTab() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(`/results/${submission.id}`, '_blank')}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(`/results/${submission.id}`, '_blank')}
                           className="flex items-center space-x-1"
                         >
                           <Eye size={14} />
@@ -532,7 +532,7 @@ export default function SubmissionsTab() {
                         >
                           <Trash2 size={14} />
                           <span>Delete</span>
-                        </Button>
+                      </Button>
                       </div>
                     </td>
                   </tr>

@@ -71,13 +71,13 @@ export default function QuestionsTab() {
     try {
       setLoading(true);
       setError(null);
-
+      
       const response = await surveyAPI.getQuestions(
         filterRole || undefined,
         activeSurvey,
         filterDimension || undefined
       );
-
+      
       setQuestions(response.data || []);
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to fetch questions');
@@ -247,13 +247,13 @@ export default function QuestionsTab() {
                 }}
                 className="inline-flex items-center gap-2"
               >
-                <Plus className="h-4 w-4" />
-                Add Question
+              <Plus className="h-4 w-4" />
+              Add Question
               </Button>
             </div>
           </div>
         </CardHeader>
-
+        
         <CardContent>
           <div className="mb-6 space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -267,7 +267,7 @@ export default function QuestionsTab() {
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-
+              
               <div className="min-w-[150px]">
                 <select
                   value={filterRole}
@@ -282,7 +282,7 @@ export default function QuestionsTab() {
                   ))}
                 </select>
               </div>
-
+              
               <div className="min-w-[150px]">
                 <select
                   value={filterDimension}
@@ -319,9 +319,9 @@ export default function QuestionsTab() {
                         <span className="text-sm font-medium text-blue-600">ID: {question.id}</span>
                         <span
                           className={`px-2 py-1 text-xs rounded-full ${
-                            question.is_active
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-600'
+                          question.is_active 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-600'
                           }`}
                         >
                           {question.is_active ? 'Active' : 'Inactive'}
@@ -340,9 +340,9 @@ export default function QuestionsTab() {
                           </span>
                         )}
                       </div>
-
+                      
                       <p className="text-gray-900 mb-2">{question.text}</p>
-
+                      
                       <div className="flex items-center gap-4 text-xs text-gray-500">
                         <span className="inline-flex items-center gap-1">
                           <Users className="h-3 w-3" />
@@ -356,11 +356,11 @@ export default function QuestionsTab() {
                         )}
                         {question.order && <span>Order: {question.order}</span>}
                         {question.created_at && (
-                          <span>Created: {new Date(question.created_at).toLocaleDateString()}</span>
+                        <span>Created: {new Date(question.created_at).toLocaleDateString()}</span>
                         )}
                       </div>
                     </div>
-
+                    
                     <div className="flex items-center gap-2 ml-4">
                       <button
                         className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"

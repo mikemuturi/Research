@@ -189,7 +189,7 @@ export default function AnswersTab() {
     );
   };
 
-  return (
+    return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
@@ -362,7 +362,7 @@ export default function AnswersTab() {
                 <div>
                   <h4 className="text-base font-semibold text-gray-900">
                     {selectedSubmission.name || 'Anonymous Respondent'}
-                  </h4>
+                    </h4>
                   <p className="text-sm text-gray-600 capitalize">
                     {selectedSubmission.role?.replace('_', ' ')} •{' '}
                     {selectedSubmission.survey_type === 'rafsia' ? 'RAFSIA' : 'ISP'} Survey
@@ -395,7 +395,7 @@ export default function AnswersTab() {
               <p className="text-xs text-gray-400 mt-3">
                 Submitted {formatSubmittedAt(selectedSubmission.submitted_at)}
               </p>
-            </div>
+          </div>
 
             <Select
               label="Filter by Dimension"
