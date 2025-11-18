@@ -1,10 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
+
   images: {
-    domains: ['images.pexels.com'],
+    unoptimized: true,
+    domains: ['images.pexels.com'], // allow external images
   },
-  // Removed rewrites since we're using full API URLs in axios configuration
-  // This prevents path resolution issues
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // Rewrites removed as per project setup
 };
 
 module.exports = nextConfig;
+

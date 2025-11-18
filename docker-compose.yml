@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:15
+    container_name: rafsia_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: rafsia
+      POSTGRES_USER: rafsia
+      POSTGRES_PASSWORD: rafsia123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rafsia_network
+
   backend:
     build:
       context: ./backend
@@ -8,13 +21,18 @@ services:
     container_name: rafsia_backend
     restart: always
     ports:
-      - "8000:8000"
+      - "8011:8000"
     environment:
-      - DEBUG=False
-      - ALLOWED_HOSTS=rafsia.org,www.rafsia.org,138.68.16.159,localhost
-      - DATABASE_URL=sqlite:////app/db.sqlite3
+      DEBUG: "False"
+      ALLOWED_HOSTS: "rafsia.org,www.rafsia.org,138.68.16.159,localhost"
+      DB_NAME: "rafsia"
+      DB_USER: "rafsia"
+      DB_PASS: "rafsia123"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+    depends_on:
+      - db
     volumes:
-      - ./backend/db.sqlite3:/app/db.sqlite3
       - static_volume:/app/staticfiles
     networks:
       - rafsia_network
@@ -26,10 +44,10 @@ services:
     container_name: rafsia_frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "3010:3000"
     environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://rafsia.org/api
+      NODE_ENV: "production"
+      NEXT_PUBLIC_API_URL: "https://rafsia.org/api"
     depends_on:
       - backend
     networks:
@@ -54,7 +72,9 @@ services:
 
 volumes:
   static_volume:
+  postgres_data:
 
 networks:
   rafsia_network:
     driver: bridge
+
